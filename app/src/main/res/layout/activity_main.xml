@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.circularrangebar.MainActivity">
+
+    <com.circularrangebar.Views.SeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:paddingLeft="30dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        custom:barHeight="20dp"
+        custom:baseColor="@android:color/darker_gray"
+        custom:circleRadius="14dp"
+        custom:circleTextColor="@android:color/black"
+        custom:circleTextSize="12sp"
+        custom:fillColor="@android:color/holo_red_dark"
+        custom:labelText="Text"
+        custom:labelTextColor="@android:color/black"
+        custom:labelTextSize="12sp"
+
+        custom:maxValueTextColor="@android:color/black"
+        custom:maxValueTextSize="12sp"
+        custom:spaceAfterBar="10dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number" />
+
+        <Button
+            android:id="@+id/btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="save" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
@@ -11,45 +12,45 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.circularrangebar.MainActivity">
 
-    <com.circularrangebar.Views.SeekBar
-        android:id="@+id/seekbar"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:paddingLeft="30dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        custom:barHeight="20dp"
-        custom:baseColor="@android:color/darker_gray"
-        custom:circleRadius="14dp"
-        custom:circleTextColor="@android:color/black"
-        custom:circleTextSize="12sp"
-        custom:fillColor="@android:color/holo_red_dark"
-        custom:labelText="Text"
-        custom:labelTextColor="@android:color/black"
-        custom:labelTextSize="12sp"
+    <com.circularrangebar.CircularRangeBar.CircularRangeBar
+        android:id="@+id/circularRangeBar"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true"
+        app:circle_stroke_width="24dp"
+        app:end_angle="270"
+        app:max="360"
+        app:progress="360"
+        app:start_angle="270" />
 
-        custom:maxValueTextColor="@android:color/black"
-        custom:maxValueTextSize="12sp"
-        custom:spaceAfterBar="10dp" />
+    <Button
+        android:id="@+id/left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical">
+        android:layout_alignParentRight="true" />
 
-        <EditText
-            android:id="@+id/edittext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number" />
+    <TextView
+        android:id="@+id/progressValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true" />
 
-        <Button
-            android:id="@+id/btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="save" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/leftTAngle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" />
 
+    <TextView
+        android:id="@+id/rigthTangle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" />
 </RelativeLayout>

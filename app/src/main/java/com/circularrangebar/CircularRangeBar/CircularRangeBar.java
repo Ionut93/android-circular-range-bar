@@ -69,17 +69,21 @@ public class CircularRangeBar extends View {
     protected Paint mCircleProgressPaint;
     protected Paint mLeftThumbPaint;
     protected Paint mRightThumbPaint;
+    protected Paint mInsideWhiteCirclePaint;
 
     protected float mCircleStrokeWidth;
     protected float mCircleXRadius;
     protected float mCircleYRadius;
     protected float mLeftThumbRadius;
     protected float mLeftThumbAngle;
+    protected float mInsideWhiteCircleXRadius;
+    protected float mInsideWhiteCircleYRadius;
 
     protected float mStartAngle;
     protected float mEndAngle;
 
     protected RectF mCircleRectF = new RectF();
+    protected RectF mInsideWitheCircleRectF = new RectF();
 
     protected int mCircleColor = DEFAULT_CIRCLE_COLOR;
     protected int mCircleFillColor = DEFAULT_CIRCLE_FILL_COLOR;
@@ -91,6 +95,7 @@ public class CircularRangeBar extends View {
     protected Path mCirclePath;
     protected Path mCircleProgressPath;
     protected Path mLeftThumbStartPath;
+    protected Path mInsideWhiteCirclePath;
 
     protected float mCircleWidth;
     protected float mCircleHeight;
@@ -228,6 +233,12 @@ public class CircularRangeBar extends View {
         mCircleFillPaint.setColor(mCircleFillColor);
         mCircleFillPaint.setStyle(Paint.Style.FILL);
 
+        mInsideWhiteCirclePaint = new Paint();
+        mInsideWhiteCirclePaint.setAntiAlias(true);
+        mInsideWhiteCirclePaint.setDither(true);
+        mInsideWhiteCirclePaint.setColor(Color.WHITE);
+        mInsideWhiteCirclePaint.setStyle(Paint.Style.FILL);
+
         mCircleProgressPaint = new Paint();
         mCircleProgressPaint.setAntiAlias(true);
         mCircleProgressPaint.setDither(true);
@@ -254,6 +265,8 @@ public class CircularRangeBar extends View {
 
     protected void initRects() {
         mCircleRectF.set(-mCircleWidth, -mCircleHeight, mCircleWidth, mCircleHeight);
+        mInsideWitheCircleRectF.set(-mCircleWidth + mCircleStrokeWidth / 2, -mCircleHeight + mCircleStrokeWidth / 2,
+                mCircleWidth - mCircleStrokeWidth / 2, mCircleHeight - mCircleStrokeWidth / 2);
     }
 
     protected void initPaths() {
@@ -271,6 +284,12 @@ public class CircularRangeBar extends View {
             mLeftThumbStartPath = new Path();
         mLeftThumbStartPath.rewind();
         mLeftThumbStartPath.addArc(mCircleRectF, mLeftThumbAngle - 1, 1);
+
+        if (mInsideWhiteCirclePath == null)
+            mInsideWhiteCirclePath = new Path();
+        mInsideWhiteCirclePath.rewind();
+        mInsideWhiteCirclePath.addOval(mInsideWitheCircleRectF, Path.Direction.CW);
+
     }
 
 
@@ -290,6 +309,8 @@ public class CircularRangeBar extends View {
 
         mLeftThumb.drawThumb(canvas, mLeftThumbAngle);
         mRightThumb.drawThumb(canvas, mRightThumb.getmThumbPosition());
+
+        canvas.drawPath(mInsideWhiteCirclePath, mInsideWhiteCirclePaint);
 
     }
 

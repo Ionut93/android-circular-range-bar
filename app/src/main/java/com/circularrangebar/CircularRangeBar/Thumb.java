@@ -1,13 +1,18 @@
 package com.circularrangebar.CircularRangeBar;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
+
+import com.circularrangebar.R;
 
 /**
  * Created by irina on 1/23/2017.
@@ -16,6 +21,7 @@ import android.view.View;
 public class Thumb extends View {
 
     private static final float MINIMUM_TARGET_RADIUS_DP = 24;
+    protected static final int DEFAULT_THUMB_BITMAP = R.drawable.thumb_2;
 
     protected Paint mThumbPaint;
     protected float mThumbRadius;
@@ -28,23 +34,37 @@ public class Thumb extends View {
      * This is not provided by the user; it is calculated;
      */
     protected float mThumbPosition;
-
     protected float[] mPointerPositionXY = new float[2];
 
-    public Thumb(Context context,
-                 float pointerRadius, Paint thumbPaint) {
+    protected int mImageSize;
+
+    private final Bitmap mImage;
+    private final Matrix matrix;
+
+    public Thumb(Context context, float pointerRadius, Paint thumbPaint) {
         super(context);
 
         mThumbRadius = (int) Math.max(MINIMUM_TARGET_RADIUS_DP, pointerRadius);
         mThumbPaint = thumbPaint;
+        mImage = BitmapFactory.decodeResource(context.getResources(), DEFAULT_THUMB_BITMAP);
+        matrix = new Matrix();
+        mImageSize = mImage.getWidth() > mImage.getHeight() ? mImage.getWidth() : mImage.getHeight();
     }
 
-    public Thumb(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public void drawThumb(Canvas canvas) {
-        canvas.drawCircle(mPointerPositionXY[0], mPointerPositionXY[1], mThumbRadius, mThumbPaint);
+    public void drawThumb(Canvas canvas, float angle) {
+        //canvas.drawCircle(mPointerPositionXY[0], mPointerPositionXY[1], mThumbRadius, mThumbPaint);
+        matrix.reset();
+        float x = mPointerPositionXY[0];
+        float y = mPointerPositionXY[1] - mImageSize / 2;
+        matrix.postTranslate(x, y);
+        matrix.preRotate(angle - 270); 
+        matrix.postTranslate(mImage.getWidth() / 2,
+                mImage.getHeight() / 2);
+ /*       matrix.preRotate(angle - 270,
+                mImage.getWidth() / 2,
+                mImage.getHeight() / 2);*/
+        canvas.drawBitmap(mImage, matrix, null);
+        //canvas.drawBitmap(mImage, x, y, null);
     }
 
     boolean isInTargetZone(float x, float y) {

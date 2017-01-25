@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -20,7 +19,7 @@
         app:circle_stroke_width="24dp"
         app:end_angle="270"
         app:max="360"
-        app:progress="360"
+        app:progress="30"
         app:start_angle="270"
         app:thumb_radius="22dp" />
 

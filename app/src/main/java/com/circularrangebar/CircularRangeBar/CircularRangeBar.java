@@ -2,6 +2,7 @@ package com.circularrangebar.CircularRangeBar;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -59,6 +60,7 @@ public class CircularRangeBar extends View {
     protected static final boolean DEFAULT_MAINTAIN_EQUAL_CIRCLE = true;
     protected static final boolean DEFAULT_MOVE_OUTSIDE_CIRCLE = false;
     protected static final boolean DEFAULT_LOCK_ENABLED = true;
+
     //endregion
 
     //region Class Attributes
@@ -99,6 +101,8 @@ public class CircularRangeBar extends View {
 
     protected Thumb mLeftThumb;
     protected Thumb mRightThumb;
+
+    protected Bitmap thumbsImage;
 
     public boolean isTouchEnabled = true;
 
@@ -284,8 +288,8 @@ public class CircularRangeBar extends View {
         canvas.drawPath(mCircleProgressPath, mCircleProgressPaint);
         canvas.drawPath(mCirclePath, mCircleFillPaint);
 
-        mLeftThumb.drawThumb(canvas);
-        mRightThumb.drawThumb(canvas);
+        mLeftThumb.drawThumb(canvas, mLeftThumbAngle);
+        mRightThumb.drawThumb(canvas, mRightThumb.getmThumbPosition());
 
     }
 

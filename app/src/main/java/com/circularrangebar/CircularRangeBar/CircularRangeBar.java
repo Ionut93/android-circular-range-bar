@@ -117,7 +117,7 @@ public class CircularRangeBar extends View {
      * The smaller of the two radii will always be used in this case.
      * The default is to be a circle and not an ellipse, due to the behavior of the ellipse.
      */
-    protected boolean mMaintainEqualCircle;
+    protected boolean mMaintainEqualCircle = true;
 
     /**
      * Once a user has touched the circle, this determines if moving outside the circle is able

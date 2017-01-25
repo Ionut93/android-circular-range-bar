@@ -295,7 +295,8 @@ public class CircularRangeBar extends View {
     }
 
     protected void calculateProgressDegrees() {
-        if (mProgress == 0 || mProgress == 360) {
+        if ((mProgress == 0 && mRightThumb.mThumbPosition == 0)
+                || (mProgress == 360 && mRightThumb.mThumbPosition == 360)) {
             mProgressDegrees = 0;
             return;
         }
@@ -408,21 +409,62 @@ public class CircularRangeBar extends View {
         cwDistanceFromEnd = (cwDistanceFromEnd < 0 ? 360f + cwDistanceFromEnd : cwDistanceFromEnd); // Verified
         ccwDistanceFromEnd = 360f - cwDistanceFromEnd; // Verified
 
+        float cwDistanceFromLeftThumb = touchAngle - mLeftThumbAngle;
+        cwDistanceFromLeftThumb = (cwDistanceFromLeftThumb < 0 ? 360f + cwDistanceFromLeftThumb : cwDistanceFromLeftThumb);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 onActionDown(x, y);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                onActionMove(touchAngle);
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                onActionUp();
+                break;
+            case MotionEvent.ACTION_UP:
+                onActionUp();
                 break;
         }
 
         return true;
     }
 
+    private void onActionUp() {
+        if (mLeftThumb.isThumbPressed())
+            mLeftThumb.setmThumbPressed(false);
+        if (mRightThumb.isThumbPressed())
+            mRightThumb.setmThumbPressed(false);
+    }
+
     private void onActionDown(float x, float y) {
         if (!mRightThumb.isThumbPressed() && mRightThumb.isInTargetZone(x, y)) {
             Log.i("ThumbPressed:", "Right");
+            mRightThumb.setmThumbPressed(true);
         } else if (!mRightThumb.isThumbPressed() && mLeftThumb.isInTargetZone(x, y)) {
             Log.i("ThumbPressed:", "Left");
+            mLeftThumb.setmThumbPressed(true);
         }
+    }
+
+    private void onActionMove(float touchAngle) {
+        if (mRightThumb.isThumbPressed()) {
+            moveThumbRight(touchAngle);
+        } else if (mLeftThumb.isThumbPressed())
+            moveThumbLeft(touchAngle);
+        if (mOnCircularSeekBarChangeListener != null)
+            mOnCircularSeekBarChangeListener.onProgressChanged(this, mProgress, true);
+
+    }
+
+    private void moveThumbLeft(float angle) {
+        recalculateAll();
+        invalidate();
+    }
+
+    private void moveThumbRight(float touchAngle) {
+        setProgressBasedOnAngle(touchAngle, mRightThumb);
+        recalculateAll();
+        invalidate();
     }
 
     protected void setProgressBasedOnAngle(float angle, Thumb thumb) {
@@ -444,12 +486,7 @@ public class CircularRangeBar extends View {
 
     protected void substractPrgress(int progress) {
         this.mProgress -= progress;
-        if (mProgress > 360)
-            mProgress -= 360;
-        if (mProgress < 0)
-            mProgress += 360;
-        if (this.mProgress == 360)
-            this.mProgress = 0;
+        verifyProgressValue();
         if (mOnCircularSeekBarChangeListener != null) {
             mOnCircularSeekBarChangeListener.onProgressChanged(this, mProgress, false);
         }
@@ -461,17 +498,21 @@ public class CircularRangeBar extends View {
 
     public void setProgress(int mProgress) {
         this.mProgress = mProgress;
-        if (this.mProgress > 360)
-            this.mProgress -= 360;
-        if (this.mProgress < 0)
-            this.mProgress += 360;
-        if (this.mProgress == 360)
-            this.mProgress = 0;
+        verifyProgressValue();
         if (mOnCircularSeekBarChangeListener != null) {
             mOnCircularSeekBarChangeListener.onProgressChanged(this, this.mProgress, false);
         }
         recalculateAll();
         invalidate();
+    }
+
+    private void verifyProgressValue() {
+        if (mProgress > 360)
+            mProgress -= 360;
+        if (mProgress < 0)
+            mProgress += 360;
+        if (this.mProgress == 360)
+            this.mProgress = 0;
     }
 
     public void setMax(int max) {

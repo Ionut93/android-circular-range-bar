@@ -20,7 +20,7 @@ public class Thumb extends View {
     protected Paint mThumbPaint;
     protected float mThumbRadius;
 
-    protected boolean mThumbPressed;
+    protected boolean mThumbPressed = false;
     protected boolean mThumbIsMoving;
 
     /**

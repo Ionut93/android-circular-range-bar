@@ -21,7 +21,7 @@ import com.circularrangebar.R;
 public class Thumb extends View {
 
     private static final float MINIMUM_TARGET_RADIUS_DP = 24;
-    protected static final int DEFAULT_THUMB_BITMAP = R.drawable.thumb_2;
+    protected static final int DEFAULT_THUMB_BITMAP = R.drawable.thumb;
 
     protected Paint mThumbPaint;
     protected float mThumbRadius;
@@ -52,19 +52,15 @@ public class Thumb extends View {
     }
 
     public void drawThumb(Canvas canvas, float angle) {
-        //canvas.drawCircle(mPointerPositionXY[0], mPointerPositionXY[1], mThumbRadius, mThumbPaint);
+
         matrix.reset();
-        float x = mPointerPositionXY[0];
+        float x = mPointerPositionXY[0] - mImage.getWidth() / 2;
         float y = mPointerPositionXY[1] - mImageSize / 2;
-        matrix.postTranslate(x, y);
-        matrix.preRotate(angle - 270); 
-        matrix.postTranslate(mImage.getWidth() / 2,
-                mImage.getHeight() / 2);
- /*       matrix.preRotate(angle - 270,
+        matrix.preRotate(angle - 270,
                 mImage.getWidth() / 2,
-                mImage.getHeight() / 2);*/
+                mImage.getHeight() / 2);
+        matrix.postTranslate(x, y);
         canvas.drawBitmap(mImage, matrix, null);
-        //canvas.drawBitmap(mImage, x, y, null);
     }
 
     boolean isInTargetZone(float x, float y) {

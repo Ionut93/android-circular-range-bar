@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progress = circularRangeBar.getProgress();
-                progress += 50;
+                progress += 1;
                 circularRangeBar.setProgress(progress);
             }
         });
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progress = circularRangeBar.getProgress();
-                progress -= 50;
+                progress -= 1;
                 circularRangeBar.setProgress(progress);
             }
         });

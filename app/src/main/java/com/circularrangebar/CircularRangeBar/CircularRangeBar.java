@@ -313,7 +313,7 @@ public class CircularRangeBar extends View {
 
     protected void calculateRightThumbPositionAngle() {
         if (mProgress == 0 || mProgress == 360) {
-            mRightThumb.setmThumbPosition(mProgress);
+            mRightThumb.setmThumbPosition(mLeftThumbAngle);
             return;
         }
         float progressPercent = ((float) mProgress / (float) mMax);

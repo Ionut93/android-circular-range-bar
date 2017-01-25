@@ -70,7 +70,7 @@ public class CircularRangeBar extends View {
 
     protected Path mCirclePath;
     protected Path mCircleProgressPath;
-    protected Path mRightThumbStartPath;
+    protected Path mLeftThumbStartPath;
 
     protected float mCircleWidth;
     protected float mCircleHeight;
@@ -230,14 +230,20 @@ public class CircularRangeBar extends View {
     }
 
     protected void initPaths() {
-        mCirclePath = new Path();
+        if (mCirclePath == null)
+            mCirclePath = new Path();
+        mCirclePath.rewind();
         mCirclePath.addArc(mCircleRectF, mStartAngle, mTotalCircleDegrees);
 
-        mCircleProgressPath = new Path();
+        if (mCircleProgressPath == null)
+            mCircleProgressPath = new Path();
+        mCircleProgressPath.rewind();
         mCircleProgressPath.addArc(mCircleRectF, mStartAngle, mProgressDegrees);
 
-        mRightThumbStartPath = new Path();
-        mRightThumbStartPath.addArc(mCircleRectF, mStartAngle - 1, 1);
+        if (mLeftThumbStartPath == null)
+            mLeftThumbStartPath = new Path();
+        mLeftThumbStartPath.rewind();
+        mLeftThumbStartPath.addArc(mCircleRectF, mStartAngle - 1, 1);
     }
 
 
@@ -301,15 +307,21 @@ public class CircularRangeBar extends View {
         initRects();
 
         initPaths();
-
-        mRightThumb.calculatePointerXYPosition(mCircleProgressPath, mCirclePath);
-        mLeftThumb.calculatePointerXYPosition(mRightThumbStartPath);
+        calculateXYPositionOfThumbsInArc();
     }
 
     protected void switchThumbs() {
         final Thumb tempThumb = mLeftThumb;
         mLeftThumb = mRightThumb;
         mRightThumb = tempThumb;
+    }
+
+    protected void calculateXYPositionOfThumbsInArc() {
+        if (mProgressDegrees == 0)
+            mRightThumb.calculatePointerXYPosition(mLeftThumbStartPath);
+        else
+            mRightThumb.calculatePointerXYPosition(mCircleProgressPath, mCirclePath);
+        mLeftThumb.calculatePointerXYPosition(mLeftThumbStartPath);
     }
 
     @Override
@@ -341,7 +353,7 @@ public class CircularRangeBar extends View {
         this.mEndAngle = angle;
     }
 
-    public void setRightThumbAnglePoint(float angle, int progressSubstract) {
+    public void setLeftThumbAnglePoint(float angle, int progressSubstract) {
         if (angle > 360)
             angle -= 360;
         if (angle < 0)

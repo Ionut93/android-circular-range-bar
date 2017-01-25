@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progress = circularRangeBar.getProgress();
-                progress += 1;
+                progress += 50;
                 circularRangeBar.setProgress(progress);
             }
         });
@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startangle = circularRangeBar.getStartAngle();
-                startangle += 1;
-                circularRangeBar.setRightThumbAnglePoint(startangle, 1);
+                startangle +=50;
+                circularRangeBar.setLeftThumbAnglePoint(startangle, 50);
             }
         });
         circularRangeBar.setOnCircularSeekBarChangeListener(new CircularRangeBar.OnCircularSeekBarChangeListener() {

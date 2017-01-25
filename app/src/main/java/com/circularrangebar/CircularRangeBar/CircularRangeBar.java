@@ -8,6 +8,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.circularrangebar.R;
@@ -18,6 +20,19 @@ import com.circularrangebar.Views.CircularSeekBar;
  */
 
 public class CircularRangeBar extends View {
+
+    //region Constants
+
+    /**
+     * Used to scale the dp units to pixels
+     */
+    protected final float DPTOPX_SCALE = getResources().getDisplayMetrics().density;
+
+    /**
+     * Minimum touch target size in DP. 48dp is the Android design recommendation
+     */
+    protected final float MIN_TOUCH_TARGET_DP = 48;
+    //endregion
 
     //region Default values
     protected static final float DEFAULT_CIRCLE_X_RADIUS = 30f;
@@ -55,6 +70,7 @@ public class CircularRangeBar extends View {
     protected float mCircleXRadius;
     protected float mCircleYRadius;
     protected float mLeftThumbRadius;
+    protected float mLeftThumbAngle;
 
     protected float mStartAngle;
     protected float mEndAngle;
@@ -77,9 +93,12 @@ public class CircularRangeBar extends View {
 
     protected int mMax;
     protected int mProgress;
+    protected int mProgressPosition;
 
     protected Thumb mLeftThumb;
     protected Thumb mRightThumb;
+
+    public boolean isTouchEnabled = true;
 
     /**
      * If true, then the user can specify the X and Y radii.
@@ -179,7 +198,9 @@ public class CircularRangeBar extends View {
             mProgress = a.getInt(R.styleable.CircularRangeBar_progress, DEFAULT_PROGRESS);
             mCanMoveOutsideCircle = a.getBoolean(R.styleable.CircularRangeBar_move_outside_circle, DEFAULT_MOVE_OUTSIDE_CIRCLE);
             mUseCustomRadii = a.getBoolean(R.styleable.CircularRangeBar_use_custom_radii, DEFAULT_USE_CUSTOM_RADII);
-            mLeftThumbRadius = a.getDimension(R.styleable.CircularRangeBar_left_thumb_radius, DEFAULT_POINTER_RADIUS);
+            mLeftThumbRadius = a.getDimension(R.styleable.CircularRangeBar_thumb_radius, DEFAULT_POINTER_RADIUS);
+            mLeftThumbAngle = mStartAngle;
+            mProgressPosition = mProgress;
         } finally {
             a.recycle();
         }
@@ -238,12 +259,12 @@ public class CircularRangeBar extends View {
         if (mCircleProgressPath == null)
             mCircleProgressPath = new Path();
         mCircleProgressPath.rewind();
-        mCircleProgressPath.addArc(mCircleRectF, mStartAngle, mProgressDegrees);
+        mCircleProgressPath.addArc(mCircleRectF, mLeftThumbAngle, mProgressDegrees);
 
         if (mLeftThumbStartPath == null)
             mLeftThumbStartPath = new Path();
         mLeftThumbStartPath.rewind();
-        mLeftThumbStartPath.addArc(mCircleRectF, mStartAngle - 1, 1);
+        mLeftThumbStartPath.addArc(mCircleRectF, mLeftThumbAngle - 1, 1);
     }
 
 
@@ -274,11 +295,11 @@ public class CircularRangeBar extends View {
     }
 
     protected void calculateProgressDegrees() {
-        if (mRightThumb.mThumbPosition == 0 || mRightThumb.mThumbPosition == 360) {
+        if (mProgress == 0 || mProgress == 360) {
             mProgressDegrees = 0;
             return;
         }
-        mProgressDegrees = mRightThumb.mThumbPosition - mStartAngle; // Verified
+        mProgressDegrees = mRightThumb.mThumbPosition - mLeftThumbAngle; // Verified
         mProgressDegrees = (mProgressDegrees < 0 ? 360f + mProgressDegrees : mProgressDegrees); // Verified
     }
 
@@ -289,7 +310,7 @@ public class CircularRangeBar extends View {
             return;
         }
         float progressPercent = ((float) mProgress / (float) mMax);
-        float rightThumbPositionPointer = (progressPercent * mTotalCircleDegrees) + mStartAngle;
+        float rightThumbPositionPointer = (progressPercent * mTotalCircleDegrees) + mLeftThumbAngle;
         rightThumbPositionPointer = rightThumbPositionPointer % 360f;
         mRightThumb.setmThumbPosition(rightThumbPositionPointer);
     }
@@ -348,9 +369,66 @@ public class CircularRangeBar extends View {
         recalculateAll();
     }
 
-    public void setStartAndEndAngleSamePosition(float angle) {
-        this.mStartAngle = angle;
-        this.mEndAngle = angle;
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (!isTouchEnabled)
+            return false;
+
+        // Convert coordinates to our internal coordinate system
+        float x = event.getX() - getWidth() / 2;
+        float y = event.getY() - getHeight() / 2;
+
+        // Get the distance from the center of the circle in terms of x and y
+        float distanceX = mCircleRectF.centerX() - x;
+        float distanceY = mCircleRectF.centerY() - y;
+
+        // Get the distance from the center of the circle in terms of a radius
+        float touchEventRadius = (float) Math.sqrt((Math.pow(distanceX, 2) + Math.pow(distanceY, 2)));
+
+        float minimumTouchTarget = MIN_TOUCH_TARGET_DP * DPTOPX_SCALE; // Convert minimum touch target into px
+        float additionalRadius; // Either uses the minimumTouchTarget size or larger if the ring/pointer is larger
+
+        if (mCircleStrokeWidth < minimumTouchTarget) { // If the width is less than the minimumTouchTarget, use the minimumTouchTarget
+            additionalRadius = minimumTouchTarget / 2;
+        } else {
+            additionalRadius = mCircleStrokeWidth / 2; // Otherwise use the width
+        }
+        float outerRadius = Math.max(mCircleHeight, mCircleWidth) + additionalRadius; // Max outer radius of the circle, including the minimumTouchTarget or wheel width
+        float innerRadius = Math.min(mCircleHeight, mCircleWidth) - additionalRadius; // Min inner radius of the circle, including the minimumTouchTarget or wheel width
+
+        float touchAngle;
+        touchAngle = (float) ((java.lang.Math.atan2(y, x) / Math.PI * 180) % 360); // Verified
+        touchAngle = (touchAngle < 0 ? 360 + touchAngle : touchAngle); // Verified
+
+        cwDistanceFromStart = touchAngle - mStartAngle; // Verified
+        cwDistanceFromStart = (cwDistanceFromStart < 0 ? 360f + cwDistanceFromStart : cwDistanceFromStart); // Verified
+        ccwDistanceFromStart = 360f - cwDistanceFromStart; // Verified
+
+        cwDistanceFromEnd = touchAngle - mEndAngle; // Verified
+        cwDistanceFromEnd = (cwDistanceFromEnd < 0 ? 360f + cwDistanceFromEnd : cwDistanceFromEnd); // Verified
+        ccwDistanceFromEnd = 360f - cwDistanceFromEnd; // Verified
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                onActionDown(x, y);
+                break;
+        }
+
+        return true;
+    }
+
+    private void onActionDown(float x, float y) {
+        if (!mRightThumb.isThumbPressed() && mRightThumb.isInTargetZone(x, y)) {
+            Log.i("ThumbPressed:", "Right");
+        } else if (!mRightThumb.isThumbPressed() && mLeftThumb.isInTargetZone(x, y)) {
+            Log.i("ThumbPressed:", "Left");
+        }
+    }
+
+    protected void setProgressBasedOnAngle(float angle, Thumb thumb) {
+        thumb.mThumbPosition = angle;
+        calculateProgressDegrees();
+        mProgress = Math.round((float) mMax * mProgressDegrees / mTotalCircleDegrees);
     }
 
     public void setLeftThumbAnglePoint(float angle, int progressSubstract) {
@@ -358,7 +436,7 @@ public class CircularRangeBar extends View {
             angle -= 360;
         if (angle < 0)
             angle += 360;
-        setStartAndEndAngleSamePosition(angle);
+        setLeftThumbAngle(angle);
         substractPrgress(progressSubstract);
         recalculateAll();
         invalidate();
@@ -370,6 +448,8 @@ public class CircularRangeBar extends View {
             mProgress -= 360;
         if (mProgress < 0)
             mProgress += 360;
+        if (this.mProgress == 360)
+            this.mProgress = 0;
         if (mOnCircularSeekBarChangeListener != null) {
             mOnCircularSeekBarChangeListener.onProgressChanged(this, mProgress, false);
         }
@@ -385,6 +465,8 @@ public class CircularRangeBar extends View {
             this.mProgress -= 360;
         if (this.mProgress < 0)
             this.mProgress += 360;
+        if (this.mProgress == 360)
+            this.mProgress = 0;
         if (mOnCircularSeekBarChangeListener != null) {
             mOnCircularSeekBarChangeListener.onProgressChanged(this, this.mProgress, false);
         }
@@ -409,6 +491,23 @@ public class CircularRangeBar extends View {
 
     public void setEndAngle(float mEndAngle) {
         this.mEndAngle = mEndAngle;
+    }
+
+    /**
+     * Set whether user touch input is accepted or ignored.
+     *
+     * @param boolean value. True if user touch input is to be accepted, false if user touch input is to be ignored.
+     */
+    public void setIsTouchEnabled(boolean isTouchEnabled) {
+        this.isTouchEnabled = isTouchEnabled;
+    }
+
+    public void setLeftThumbAngle(float angle) {
+        this.mLeftThumbAngle = angle;
+    }
+
+    public float getLeftThumbAngle() {
+        return mLeftThumbAngle;
     }
 
     public int getProgress() {

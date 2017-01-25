@@ -13,7 +13,7 @@ import com.circularrangebar.Views.SeekBar;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnLeft, btnRight;
+    Button btnLeft, btnRight, leftBottom;
     CircularRangeBar circularRangeBar;
     TextView progressValue, leftAngle, rightAngle;
     int progress;
@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         btnLeft = (Button) findViewById(R.id.left);
+        leftBottom = (Button) findViewById(R.id.leftbot);
         btnRight = (Button) findViewById(R.id.right);
         circularRangeBar = (CircularRangeBar) findViewById(R.id.circularRangeBar);
         progressValue = (TextView) findViewById(R.id.progressValue);
@@ -42,10 +43,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        leftBottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progress = circularRangeBar.getProgress();
+                progress -= 50;
+                circularRangeBar.setProgress(progress);
+            }
+        });
+
         btnRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startangle = circularRangeBar.getStartAngle();
+                startangle = circularRangeBar.getLeftThumbAngle();
                 startangle +=50;
                 circularRangeBar.setLeftThumbAnglePoint(startangle, 50);
             }

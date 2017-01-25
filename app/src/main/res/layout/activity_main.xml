@@ -21,12 +21,19 @@
         app:end_angle="270"
         app:max="360"
         app:progress="360"
-        app:start_angle="270" />
+        app:start_angle="270"
+        app:thumb_radius="22dp" />
 
     <Button
         android:id="@+id/left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/leftbot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
 
     <Button
         android:id="@+id/right"

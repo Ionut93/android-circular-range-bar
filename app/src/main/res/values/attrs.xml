@@ -53,7 +53,7 @@
         <attr name="progress" format="integer" />
         <attr name="move_outside_circle" format="boolean" />
         <attr name="use_custom_radii" format="boolean" />
-        <attr name="left_thumb_radius" format="dimension" />
+        <attr name="thumb_radius" format="dimension" />
     </declare-styleable>
 
 </resources>

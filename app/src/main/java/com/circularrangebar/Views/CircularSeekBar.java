@@ -706,6 +706,7 @@ public class CircularSeekBar extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mUserIsMovingPointer) {
+                    // Which way is moving CW or CCW
                     if (lastCWDistanceFromStart < cwDistanceFromStart) {
                         if ((cwDistanceFromStart - lastCWDistanceFromStart) > 180f && !mIsMovingCW) {
                             lockAtStart = true;
@@ -722,6 +723,7 @@ public class CircularSeekBar extends View {
                         }
                     }
 
+                    // Lock position
                     if (lockAtStart && mIsMovingCW) {
                         lockAtStart = false;
                     }

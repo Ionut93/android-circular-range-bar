@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 
 /**
@@ -13,6 +14,8 @@ import android.view.View;
  */
 
 public class Thumb extends View {
+
+    private static final float MINIMUM_TARGET_RADIUS_DP = 24;
 
     protected Paint mThumbPaint;
     protected float mThumbRadius;
@@ -32,7 +35,8 @@ public class Thumb extends View {
     public Thumb(Context context,
                  float pointerRadius, Paint thumbPaint) {
         super(context);
-        mThumbRadius = pointerRadius;
+
+        mThumbRadius = (int) Math.max(MINIMUM_TARGET_RADIUS_DP, pointerRadius);
         mThumbPaint = thumbPaint;
     }
 
@@ -83,4 +87,11 @@ public class Thumb extends View {
         this.mThumbRadius = mThumbRadius;
     }
 
+    public boolean isThumbPressed() {
+        return mThumbPressed;
+    }
+
+    public boolean isThumbIsMoving() {
+        return mThumbIsMoving;
+    }
 }

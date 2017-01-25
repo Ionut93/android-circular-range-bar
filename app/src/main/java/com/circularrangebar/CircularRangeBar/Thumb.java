@@ -31,13 +31,16 @@ public class Thumb extends View {
 
     protected float[] mPointerPositionXY = new float[2];
 
-
     public Thumb(Context context,
                  float pointerRadius, Paint thumbPaint) {
         super(context);
 
         mThumbRadius = (int) Math.max(MINIMUM_TARGET_RADIUS_DP, pointerRadius);
         mThumbPaint = thumbPaint;
+    }
+
+    public Thumb(Context context, AttributeSet attrs) {
+        super(context, attrs);
     }
 
     public void drawThumb(Canvas canvas) {
@@ -85,6 +88,10 @@ public class Thumb extends View {
 
     public void setmThumbRadius(float mThumbRadius) {
         this.mThumbRadius = mThumbRadius;
+    }
+
+    public float getmThumbPosition() {
+        return mThumbPosition;
     }
 
     public boolean isThumbPressed() {

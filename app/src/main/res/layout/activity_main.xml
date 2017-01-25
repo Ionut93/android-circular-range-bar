@@ -41,6 +41,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true" />
 
+    <Button
+        android:id="@+id/rightbot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" />
+
     <TextView
         android:id="@+id/progressValue"
         android:layout_width="wrap_content"

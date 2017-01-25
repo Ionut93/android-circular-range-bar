@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -437,7 +439,8 @@ public class CircularRangeBar extends View {
     }
 
     private void onActionDown(float x, float y) {
-        if (!mRightThumb.isThumbPressed() && mRightThumb.isInTargetZone(x, y)) {
+        if (!mLeftThumb.isThumbPressed() &&
+                !mRightThumb.isThumbPressed() && mRightThumb.isInTargetZone(x, y)) {
             Log.i("ThumbPressed:", "Right");
             mRightThumb.setmThumbPressed(true);
         } else if (!mRightThumb.isThumbPressed() && mLeftThumb.isInTargetZone(x, y)) {
@@ -457,6 +460,17 @@ public class CircularRangeBar extends View {
     }
 
     private void moveThumbLeft(float angle) {
+        int progressDif = calculateProgressBetweenTwoAngles(mLeftThumbAngle, angle);
+        modifyPrgressByValue(progressDif);
+        setLeftThumbAngle(mLeftThumbAngle + progressDif);
+        recalculateAll();
+        invalidate();
+    }
+
+    private void moveWholeBarWithoutChangingProgressValue(float angle) {
+        verifyProgressValue();
+        setLeftThumbAngle(angle);
+        calculateProgressDegrees();
         recalculateAll();
         invalidate();
     }
@@ -473,18 +487,24 @@ public class CircularRangeBar extends View {
         mProgress = Math.round((float) mMax * mProgressDegrees / mTotalCircleDegrees);
     }
 
+    protected int calculateProgressBetweenTwoAngles(float thumbAngle, float newThumbAngle) {
+        int phi = (int) (newThumbAngle - thumbAngle) % 360;
+        int distance = phi > 360 ? 360 - phi : phi;
+        return distance;
+    }
+
     public void setLeftThumbAnglePoint(float angle, int progressSubstract) {
         if (angle > 360)
             angle -= 360;
         if (angle < 0)
             angle += 360;
         setLeftThumbAngle(angle);
-        substractPrgress(progressSubstract);
+        modifyPrgressByValue(progressSubstract);
         recalculateAll();
         invalidate();
     }
 
-    protected void substractPrgress(int progress) {
+    protected void modifyPrgressByValue(int progress) {
         this.mProgress -= progress;
         verifyProgressValue();
         if (mOnCircularSeekBarChangeListener != null) {
@@ -569,6 +589,29 @@ public class CircularRangeBar extends View {
 
     public Thumb getRightThumb() {
         return mRightThumb;
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        final Bundle bundle = new Bundle();
+
+        bundle.putParcelable("instanceState", super.onSaveInstanceState());
+        bundle.putFloat("LEFT_THUMB_ANGLE", mLeftThumbAngle);
+        bundle.putInt("PROGRESS", mProgress);
+
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            final Bundle bundle = (Bundle) state;
+            mProgress = bundle.getInt("PROGRESS");
+            mLeftThumbAngle = bundle.getFloat("LEFT_THUMB_ANGLE");
+            super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
+        } else {
+            super.onRestoreInstanceState(state);
+        }
     }
 
     /**

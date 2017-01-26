@@ -11,16 +11,32 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.circularrangebar.MainActivity">
 
-    <com.circularrangebar.CircularRangeBar.CircularRangeBar
-        android:id="@+id/circularRangeBar"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_centerInParent="true"
-        app:circle_stroke_width="28dp"
-        app:end_angle="270"
-        app:max="360"
-        app:progress="30"
-        app:start_angle="270"
-        app:thumb_radius="22dp" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/piechart"
+            android:layout_width="280dp"
+            android:layout_height="280dp"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="4dp" />
+
+        <com.circularrangebar.CircularRangeBar.CircularRangeBar
+            android:id="@+id/circularRangeBar"
+            android:layout_width="320dp"
+            android:layout_height="320dp"
+            android:visibility="invisible"
+            app:circle_progress_color="#ff0000ff"
+            app:circle_stroke_width="26dp"
+            app:end_angle="270"
+            app:max="360"
+            app:progress="30"
+            app:start_angle="270"
+            app:thumb_radius="22dp" />
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

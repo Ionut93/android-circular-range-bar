@@ -289,7 +289,7 @@ public class CircularRangeBar extends View {
         if (mLeftThumbStartPath == null)
             mLeftThumbStartPath = new Path();
         mLeftThumbStartPath.rewind();
-        mLeftThumbStartPath.addArc(mCircleRectF, mLeftThumbAngle, 1);
+        mLeftThumbStartPath.addArc(mCircleRectF, mLeftThumbAngle, 0.3f);
 
         if (mInsideWhiteCirclePath == null)
             mInsideWhiteCirclePath = new Path();
@@ -444,51 +444,54 @@ public class CircularRangeBar extends View {
         cwDistanceFromLeftThumb = (cwDistanceFromLeftThumb < 0 ? 360f + cwDistanceFromLeftThumb : cwDistanceFromLeftThumb);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                onActionDown(x, y);
-                break;
+                return onActionDown(x, y);
             case MotionEvent.ACTION_MOVE:
-                onActionMove(touchAngle);
-                break;
+                return onActionMove(touchAngle);
             case MotionEvent.ACTION_CANCEL:
-                onActionUp();
-                break;
+                return onActionUp();
             case MotionEvent.ACTION_UP:
-                onActionUp();
-                break;
+                return onActionUp();
         }
 
-        return true;
+        return false;
     }
 
-    private void onActionUp() {
+    private boolean onActionUp() {
         mLeftThumb.setmThumbPressed(false);
         mRightThumb.setmThumbPressed(false);
         isProgressTouched = false;
         onStartTouchAngle = DEFAULT_ON_START_ANGLE;
+        return true;
     }
 
-    private void onActionDown(float x, float y) {
+    private boolean onActionDown(float x, float y) {
         if (!mLeftThumb.isThumbPressed() &&
                 !mRightThumb.isThumbPressed() && mRightThumb.isInTargetZone(x, y)) {
             mRightThumb.setmThumbPressed(true);
+            return true;
         } else if (!mRightThumb.isThumbPressed() && mLeftThumb.isInTargetZone(x, y)) {
             mLeftThumb.setmThumbPressed(true);
-        } else if (progressRectF.contains(x, y) ){
-                //!mInsideWitheCircleRectF.contains(x, y)) {
+            return true;
+        } else if (progressRectF.contains(x, y)) {
+            //!mInsideWitheCircleRectF.contains(x, y)) {
             isProgressTouched = true;
-        } 
+            return true;
+        }
+        return false;
     }
 
-    private void onActionMove(float touchAngle) {
+    private boolean onActionMove(float touchAngle) {
         if (mRightThumb.isThumbPressed()) {
             moveThumbRight(touchAngle);
-        } else if (mLeftThumb.isThumbPressed())
+            return true;
+        } else if (mLeftThumb.isThumbPressed()) {
             moveThumbLeft(touchAngle);
-        else if (isProgressTouched) {
+            return true;
+        } else if (isProgressTouched) {
             moveWholeBarWithoutChangingProgressValue(touchAngle);
+            return true;
         }
-        if (mOnCircularSeekBarChangeListener != null)
-            mOnCircularSeekBarChangeListener.onProgressChanged(this, mProgress, true);
+        return false;
 
     }
 
@@ -554,6 +557,12 @@ public class CircularRangeBar extends View {
             mLeftThumbAngle -= 360;
         if (mLeftThumbAngle < 0)
             mLeftThumbAngle += 360;
+    }
+
+    public void setProgress(int progress) {
+        this.mProgress = progress;
+        recalculateAll();
+        invalidate();
     }
 
     public void setMax(int max) {

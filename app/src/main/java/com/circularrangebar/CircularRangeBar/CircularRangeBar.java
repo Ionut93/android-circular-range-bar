@@ -246,7 +246,6 @@ public class CircularRangeBar extends View {
         mCircleProgressPaint.setStrokeWidth(mCircleStrokeWidth);
         mCircleProgressPaint.setStyle(Paint.Style.STROKE);
         mCircleProgressPaint.setStrokeJoin(Paint.Join.ROUND);
-        mCircleProgressPaint.setStrokeCap(Paint.Cap.SQUARE);
 
         mLeftThumbPaint = new Paint();
         mLeftThumbPaint.setAntiAlias(true);
@@ -283,7 +282,7 @@ public class CircularRangeBar extends View {
         if (mLeftThumbStartPath == null)
             mLeftThumbStartPath = new Path();
         mLeftThumbStartPath.rewind();
-        mLeftThumbStartPath.addArc(mCircleRectF, mLeftThumbAngle - 1, 1);
+        mLeftThumbStartPath.addArc(mCircleRectF, mLeftThumbAngle, 1);
 
         if (mInsideWhiteCirclePath == null)
             mInsideWhiteCirclePath = new Path();

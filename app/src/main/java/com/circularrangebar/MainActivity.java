@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.circularrangebar.CircularRangeBar.AppointmentView;
 import com.circularrangebar.CircularRangeBar.CircularRangeBar;
 import com.circularrangebar.Views.SeekBar;
 import com.github.mikephil.charting.charts.PieChart;
@@ -24,6 +25,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static java.security.AccessController.getContext;
 
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private final int CHART_ENTRY_VALUE = 15;
     CircularRangeBar circularRangeBar;
     PieChart mChart;
+    Button button;
+    List<AppointmentView> appointmentViewList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +70,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected() {
 
+            }
+        });
+
+        button = (Button) findViewById(R.id.addView);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppointmentView a = new AppointmentView(MainActivity.this,
+                        circularRangeBar.getLeftThumbAngle(), circularRangeBar.getProgressDegrees(),
+                        circularRangeBar.getmCircleRectF());
+                circularRangeBar.addAppointment(a);
+                //circularRangeBar.setVisibility(View.INVISIBLE);
             }
         });
     }

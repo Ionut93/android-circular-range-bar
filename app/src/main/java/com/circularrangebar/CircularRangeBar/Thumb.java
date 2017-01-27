@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -24,6 +25,7 @@ public class Thumb extends View {
     protected static final int DEFAULT_THUMB_BITMAP = R.drawable.thumb;
 
     protected Paint mThumbPaint;
+    private Rect textRect = new Rect();
     protected float mThumbRadius;
 
     protected boolean mThumbPressed = false;
@@ -35,17 +37,21 @@ public class Thumb extends View {
      */
     protected float mThumbPosition;
     protected float[] mPointerPositionXY = new float[2];
+    protected int currentHour;
 
     protected int mImageSize;
 
     private final Bitmap mImage;
     private final Matrix matrix;
 
+
     public Thumb(Context context, float pointerRadius, Paint thumbPaint) {
         super(context);
 
         mThumbRadius = (int) Math.max(MINIMUM_TARGET_RADIUS_DP, pointerRadius);
         mThumbPaint = thumbPaint;
+        mThumbPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
+                14, context.getResources().getDisplayMetrics()));
         mImage = BitmapFactory.decodeResource(context.getResources(), DEFAULT_THUMB_BITMAP);
         matrix = new Matrix();
         mImageSize = mImage.getWidth() > mImage.getHeight() ? mImage.getWidth() : mImage.getHeight();
@@ -55,12 +61,24 @@ public class Thumb extends View {
 
         matrix.reset();
         float x = mPointerPositionXY[0] - mImage.getWidth() / 2;
-        float y = mPointerPositionXY[1] - mImageSize / 2;
+        float y = mPointerPositionXY[1] -  mImage.getHeight() / 2;
         matrix.preRotate(angle - 270,
                 mImage.getWidth() / 2,
                 mImage.getHeight() / 2);
         matrix.postTranslate(x, y);
         canvas.drawBitmap(mImage, matrix, null);
+        calculateCurrentHour();
+        mThumbPaint.getTextBounds(String.valueOf(currentHour), 0, String.valueOf(currentHour).length(), textRect);
+        float xText = mPointerPositionXY[0] - textRect.centerX();
+        float yText = mPointerPositionXY[1] - textRect.centerY();
+        matrix.reset();
+        matrix.preRotate(angle - 270, textRect.width() / 2, textRect.height() / 2);
+        matrix.postTranslate(xText, yText);
+        canvas.drawText(String.valueOf(currentHour), xText, yText, mThumbPaint);
+    }
+
+    protected void calculateCurrentHour() {
+        currentHour = (int) Math.ceil(mThumbPosition - CircularRangeBar.DEFAULT_START_ANGLE) / 15 + 6;
     }
 
     boolean isInTargetZone(float x, float y) {

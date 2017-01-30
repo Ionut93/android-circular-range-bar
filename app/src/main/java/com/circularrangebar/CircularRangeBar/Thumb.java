@@ -23,6 +23,7 @@ import com.circularrangebar.R;
 public class Thumb extends View {
 
     private static final float MINIMUM_TARGET_RADIUS_DP = 24;
+    private static final int SECONDS = 60;
     protected static final int DEFAULT_THUMB_BITMAP = R.drawable.thumb;
 
     protected Paint mThumbPaint;
@@ -42,7 +43,8 @@ public class Thumb extends View {
     protected float[] mPointerPositionXY = new float[2];
     protected float[] mTextPositionXY = new float[2];
     protected int currentHour;
-
+    protected String hourToDisplay;
+    protected StringBuilder sb = new StringBuilder();
     protected int mImageSize;
 
     private final Bitmap mImage;
@@ -73,19 +75,28 @@ public class Thumb extends View {
         matrix.postTranslate(x, y);
         canvas.drawBitmap(mImage, matrix, null);
         calculateCurrentHour();
-        mThumbPaint.getTextBounds(String.valueOf(currentHour), 0, String.valueOf(currentHour).length(), textRect);
+        mThumbPaint.getTextBounds(hourToDisplay, 0, hourToDisplay.length(), textRect);
         float xText = mTextPositionXY[0] - textRect.width() / 2;
         float yText = mTextPositionXY[1] - textRect.height() / 2;
         matrix.reset();
         matrix.preRotate(angle - 270, textRect.width() / 2, textRect.height() / 2);
         matrix.postTranslate(xText, yText);
-        canvas.drawText(String.valueOf(currentHour), xText, yText, mThumbPaint);
+        canvas.drawText(String.valueOf(hourToDisplay), xText, yText, mThumbPaint);
     }
 
     protected void calculateCurrentHour() {
         // currentHour = (int) (Math.abs(Math.ceil(mThumbPosition - CircularRangeBar.DEFAULT_START_ANGLE)) / 15 + 6) % 24;
         float thumbPosition = mThumbPosition < 360 ? mThumbPosition + 360 : mThumbPosition;
+        int seconds = (int) (mThumbPosition % 15) * SECONDS / 15;
         currentHour = (int) (((Math.ceil(thumbPosition - CircularRangeBar.DEFAULT_START_ANGLE) % 360) / 15) + 6) % 24;
+        hourToDisplay = "";
+        if (currentHour < 10)
+            hourToDisplay += "0";
+        hourToDisplay += currentHour + ":";
+        if (seconds < 10)
+            hourToDisplay += "0";
+        hourToDisplay += String.valueOf(seconds);
+
     }
 
     boolean isInTargetZone(float x, float y) {

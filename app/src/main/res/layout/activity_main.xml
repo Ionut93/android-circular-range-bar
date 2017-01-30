@@ -18,15 +18,15 @@
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/piechart"
-            android:layout_width="260dp"
-            android:layout_height="260dp"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
             android:layout_centerInParent="true"
             android:layout_marginTop="4dp" />
 
         <com.circularrangebar.CircularRangeBar.CircularRangeBar
             android:id="@+id/circularRangeBar"
-            android:layout_width="320dp"
-            android:layout_height="320dp"
+            android:layout_width="380dp"
+            android:layout_height="380dp"
             android:visibility="invisible"
             app:circle_progress_color="#ff0000ff"
             app:circle_stroke_width="26dp"

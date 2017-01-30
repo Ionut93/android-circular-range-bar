@@ -43,7 +43,7 @@ public class CircularRangeBar extends View {
      * Margin between Text and Handle
      */
     protected final float MIN_MARGIN_TEXT_HANDLE = 8 * DPTOPX_SCALE;
-    protected final float MIN_CIRCLE_MARGIN = 8 * DPTOPX_SCALE;
+    protected final float MIN_CIRCLE_MARGIN = 18 * DPTOPX_SCALE;
     //endregion
 
     //region Default values
@@ -324,6 +324,7 @@ public class CircularRangeBar extends View {
         if (progressRegion == null)
             progressRegion = new Region();
         progressRegion.setPath(mCircleProgressPath, new Region((int) mCircleRectF.left, (int) mCircleRectF.top, (int) mCircleRectF.right, (int) mCircleRectF.bottom));
+        progressRectF.setEmpty();
         mCircleProgressPath.computeBounds(progressRectF, false);
     }
 

@@ -39,6 +39,11 @@ public class CircularRangeBar extends View {
      * Minimum touch target size in DP. 48dp is the Android design recommendation
      */
     protected final float MIN_TOUCH_TARGET_DP = 48;
+    /**
+     * Margin between Text and Handle
+     */
+    protected final float MIN_MARGIN_TEXT_HANDLE = 8 * DPTOPX_SCALE;
+    protected final float MIN_CIRCLE_MARGIN = 8 * DPTOPX_SCALE;
     //endregion
 
     //region Default values
@@ -91,6 +96,7 @@ public class CircularRangeBar extends View {
     protected RectF mCircleRectF = new RectF();
     protected RectF mInsideWitheCircleRectF = new RectF();
     protected RectF progressRectF = new RectF();
+    protected RectF outerCircleRectf = new RectF();
     protected Region progressRegion = new Region();
 
     protected int mCircleColor = DEFAULT_CIRCLE_COLOR;
@@ -103,7 +109,9 @@ public class CircularRangeBar extends View {
     protected Path mCirclePath;
     protected Path mCircleProgressPath;
     protected Path mLeftThumbStartPath;
+    protected Path mLeftThumbOutsideStartPath;
     protected Path mInsideWhiteCirclePath;
+    protected Path mOutsideCircleProgressPath;
 
     protected float mCircleWidth;
     protected float mCircleHeight;
@@ -278,6 +286,8 @@ public class CircularRangeBar extends View {
         mCircleRectF.set(-mCircleWidth, -mCircleHeight, mCircleWidth, mCircleHeight);
         mInsideWitheCircleRectF.set(-mCircleWidth + mCircleStrokeWidth / 2, -mCircleHeight + mCircleStrokeWidth / 2,
                 mCircleWidth - mCircleStrokeWidth / 2, mCircleHeight - mCircleStrokeWidth / 2);
+        outerCircleRectf.set(-mCircleWidth - mCircleStrokeWidth - MIN_MARGIN_TEXT_HANDLE * 2, -mCircleHeight - mCircleStrokeWidth - MIN_MARGIN_TEXT_HANDLE,
+                mCircleWidth + mCircleStrokeWidth + MIN_MARGIN_TEXT_HANDLE * 2, mCircleHeight + mCircleStrokeWidth + MIN_MARGIN_TEXT_HANDLE * 3);
     }
 
     protected void initPaths() {
@@ -291,10 +301,20 @@ public class CircularRangeBar extends View {
         mCircleProgressPath.rewind();
         mCircleProgressPath.addArc(mCircleRectF, mLeftThumbAngle, mProgressDegrees);
 
+        if (mOutsideCircleProgressPath == null)
+            mOutsideCircleProgressPath = new Path();
+        mOutsideCircleProgressPath.rewind();
+        mOutsideCircleProgressPath.addArc(outerCircleRectf, mLeftThumbAngle, mProgressDegrees);
+
         if (mLeftThumbStartPath == null)
             mLeftThumbStartPath = new Path();
         mLeftThumbStartPath.rewind();
         mLeftThumbStartPath.addArc(mCircleRectF, mLeftThumbAngle, 0.3f);
+
+        if (mLeftThumbOutsideStartPath == null)
+            mLeftThumbOutsideStartPath = new Path();
+        mLeftThumbOutsideStartPath.rewind();
+        mLeftThumbOutsideStartPath.addArc(outerCircleRectf, mLeftThumbAngle, 0.3f);
 
         if (mInsideWhiteCirclePath == null)
             mInsideWhiteCirclePath = new Path();
@@ -309,8 +329,8 @@ public class CircularRangeBar extends View {
 
 
     protected void initializeThumbs() {
-        mLeftThumb = new Thumb(getContext(), mLeftThumbRadius, mLeftThumbPaint);
-        mRightThumb = new Thumb(getContext(), mLeftThumbRadius, mRightThumbPaint);
+        mLeftThumb = new Thumb(getContext(), mLeftThumbRadius, mLeftThumbPaint, outerCircleRectf);
+        mRightThumb = new Thumb(getContext(), mLeftThumbRadius, mRightThumbPaint, outerCircleRectf);
     }
 
     @Override
@@ -375,6 +395,12 @@ public class CircularRangeBar extends View {
 
         initPaths();
         calculateXYPositionOfThumbsInArc();
+        calculateTextXY();
+    }
+
+    protected void calculateTextXY() {
+        mRightThumb.calculateTextPositionXY(mOutsideCircleProgressPath);
+        mLeftThumb.calculateTextPositionXY(mLeftThumbOutsideStartPath);
     }
 
     protected void calculateXYPositionOfThumbsInArc() {
@@ -396,8 +422,8 @@ public class CircularRangeBar extends View {
             setMeasuredDimension(width, height);
         }
 
-        mCircleHeight = (float) height / 2f - mCircleStrokeWidth - DEFAULT_POINTER_RADIUS;
-        mCircleWidth = (float) width / 2f - mCircleStrokeWidth - DEFAULT_POINTER_RADIUS;
+        mCircleHeight = (float) height / 2f - mCircleStrokeWidth - DEFAULT_POINTER_RADIUS - MIN_CIRCLE_MARGIN;
+        mCircleWidth = (float) width / 2f - mCircleStrokeWidth - DEFAULT_POINTER_RADIUS - MIN_CIRCLE_MARGIN;
 
         if (mMaintainEqualCircle) { // Applies regardless of how the values were determined
             float min = Math.min(mCircleHeight, mCircleWidth);
@@ -481,7 +507,6 @@ public class CircularRangeBar extends View {
             mLeftThumb.setmThumbPressed(true);
             return true;
         } else if (progressRectF.contains(x, y)) {
-            //!mInsideWitheCircleRectF.contains(x, y)) {
             isProgressTouched = true;
             return true;
         }

@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 PieEntry pieEntry = (PieEntry) e;
                 circularRangeBar.setVisibility(View.VISIBLE);
                 int indexOfEntry = Integer.valueOf(pieEntry.getLabel());
-                int startAngel = indexOfEntry * CHART_ENTRY_VALUE + (int) circularRangeBar.getStartAngle();
+                int startAngel = (indexOfEntry * CHART_ENTRY_VALUE + (int) circularRangeBar.getStartAngle()) % 360;
                 int startProgress = CHART_ENTRY_VALUE;
                 circularRangeBar.setLeftThumbAngle(startAngel);
                 circularRangeBar.setProgress(startProgress);

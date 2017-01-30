@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -25,7 +26,9 @@ public class Thumb extends View {
     protected static final int DEFAULT_THUMB_BITMAP = R.drawable.thumb;
 
     protected Paint mThumbPaint;
-    private Rect textRect = new Rect();
+    protected Path progressPath;
+    protected RectF textRectF;
+    protected Rect textRect = new Rect();
     protected float mThumbRadius;
 
     protected boolean mThumbPressed = false;
@@ -37,6 +40,7 @@ public class Thumb extends View {
      */
     protected float mThumbPosition;
     protected float[] mPointerPositionXY = new float[2];
+    protected float[] mTextPositionXY = new float[2];
     protected int currentHour;
 
     protected int mImageSize;
@@ -45,7 +49,7 @@ public class Thumb extends View {
     private final Matrix matrix;
 
 
-    public Thumb(Context context, float pointerRadius, Paint thumbPaint) {
+    public Thumb(Context context, float pointerRadius, Paint thumbPaint, RectF textRectF) {
         super(context);
 
         mThumbRadius = (int) Math.max(MINIMUM_TARGET_RADIUS_DP, pointerRadius);
@@ -55,13 +59,14 @@ public class Thumb extends View {
         mImage = BitmapFactory.decodeResource(context.getResources(), DEFAULT_THUMB_BITMAP);
         matrix = new Matrix();
         mImageSize = mImage.getWidth() > mImage.getHeight() ? mImage.getWidth() : mImage.getHeight();
+        this.textRectF = textRectF;
     }
 
     public void drawThumb(Canvas canvas, float angle) {
 
         matrix.reset();
         float x = mPointerPositionXY[0] - mImage.getWidth() / 2;
-        float y = mPointerPositionXY[1] -  mImage.getHeight() / 2;
+        float y = mPointerPositionXY[1] - mImage.getHeight() / 2;
         matrix.preRotate(angle - 270,
                 mImage.getWidth() / 2,
                 mImage.getHeight() / 2);
@@ -69,8 +74,8 @@ public class Thumb extends View {
         canvas.drawBitmap(mImage, matrix, null);
         calculateCurrentHour();
         mThumbPaint.getTextBounds(String.valueOf(currentHour), 0, String.valueOf(currentHour).length(), textRect);
-        float xText = mPointerPositionXY[0] - textRect.centerX();
-        float yText = mPointerPositionXY[1] - textRect.centerY();
+        float xText = mTextPositionXY[0] - textRect.width() / 2;
+        float yText = mTextPositionXY[1] - textRect.height() / 2;
         matrix.reset();
         matrix.preRotate(angle - 270, textRect.width() / 2, textRect.height() / 2);
         matrix.postTranslate(xText, yText);
@@ -78,7 +83,9 @@ public class Thumb extends View {
     }
 
     protected void calculateCurrentHour() {
-        currentHour = (int) Math.ceil(mThumbPosition - CircularRangeBar.DEFAULT_START_ANGLE) / 15 + 6;
+        // currentHour = (int) (Math.abs(Math.ceil(mThumbPosition - CircularRangeBar.DEFAULT_START_ANGLE)) / 15 + 6) % 24;
+        float thumbPosition = mThumbPosition < 360 ? mThumbPosition + 360 : mThumbPosition;
+        currentHour = (int) (((Math.ceil(thumbPosition - CircularRangeBar.DEFAULT_START_ANGLE) % 360) / 15) + 6) % 24;
     }
 
     boolean isInTargetZone(float x, float y) {
@@ -92,6 +99,7 @@ public class Thumb extends View {
 
     protected void calculatePointerXYPosition(Path circleProgressPath, Path circlePath) {
         PathMeasure pm = new PathMeasure(circleProgressPath, false);
+        progressPath = circleProgressPath;
         boolean returnValue = pm.getPosTan(pm.getLength(), mPointerPositionXY, null);
         if (!returnValue) {
             pm = new PathMeasure(circlePath, false);
@@ -99,7 +107,13 @@ public class Thumb extends View {
         }
     }
 
+    protected void calculateTextPositionXY(Path circleOutsideProgressPath) {
+        PathMeasure pm = new PathMeasure(circleOutsideProgressPath, false);
+        boolean returnValue = pm.getPosTan(pm.getLength(), mTextPositionXY, null);
+    }
+
     protected void calculatePointerXYPosition(Path circleProgressPath) {
+        progressPath = circleProgressPath;
         PathMeasure pm = new PathMeasure(circleProgressPath, false);
         boolean returnValue = pm.getPosTan(pm.getLength(), mPointerPositionXY, null);
     }

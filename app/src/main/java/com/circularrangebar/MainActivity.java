@@ -7,6 +7,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.circularrangebar.CircularRangeBar.AppointmentView;
 import com.circularrangebar.CircularRangeBar.CircularRangeBar;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     PieChart mChart;
     Button button;
     List<AppointmentView> appointmentViewList = new ArrayList<>();
+    boolean hideProgress = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         mChart = (PieChart) findViewById(R.id.piechart);
         mChart.setMaxHighlightDistance(0);
         mChart.setData(generatePieData());
-        mChart.setHoleRadius(dpToPx(30));
+        mChart.setHoleRadius(60);
         mChart.setTransparentCircleRadius(0);
         mChart.setRotationEnabled(false);
         mChart.getLegend().setEnabled(false);
@@ -80,7 +82,19 @@ public class MainActivity extends AppCompatActivity {
         EditText min = (EditText) findViewById(R.id.minutes);
         int h = Integer.valueOf(hour.getText().toString());
         int m = Integer.valueOf(min.getText().toString());
-        circularRangeBar.addAppointment(h, 0, m, 0);
+        circularRangeBar.addAppointment(h, 15, m, 30);
+    }
+
+    public void hide(View v) {
+        circularRangeBar.hideCurrentProgress(!hideProgress);
+    }
+
+    public void center(View v) {
+        Toast.makeText(MainActivity.this, "Center", Toast.LENGTH_SHORT).show();
+    }
+
+    public void clear(View v) {
+        circularRangeBar.cleanAppointments();
     }
 
     public int dpToPx(int dp) {

@@ -54,7 +54,7 @@ public class Thumb extends View {
         mThumbRadius = (int) Math.max(MINIMUM_TARGET_RADIUS_DP, pointerRadius);
         mThumbPaint = thumbPaint;
         mThumbPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
-                14, context.getResources().getDisplayMetrics()));
+                16, context.getResources().getDisplayMetrics()));
         mImage = BitmapFactory.decodeResource(context.getResources(), DEFAULT_THUMB_BITMAP);
         matrix = new Matrix();
         mImageSize = mImage.getWidth() > mImage.getHeight() ? mImage.getWidth() : mImage.getHeight();

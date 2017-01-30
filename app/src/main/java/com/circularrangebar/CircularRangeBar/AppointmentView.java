@@ -23,7 +23,7 @@ public class AppointmentView extends View {
     private final int DEFAULT_ONE_INTERVAL_ANGLE_VALUE = 15;
     private final int DEFAULT_CIRCLE_START_ANGLE = 270;
     private final int DEFAULT_NUMBER_OF_VIEWS = 24;
-
+    private final int DEFAULT_MINUTES = 60;
     /*
     Since Clock Top value is 6 we have to subtract
     this value so that we can find the correct angle
@@ -110,14 +110,28 @@ public class AppointmentView extends View {
 
     private void calculateStartAngle() {
         int startIndex = (startHour - DEFAULT_HOUR_MODIFIER + DEFAULT_NUMBER_OF_VIEWS) % DEFAULT_NUMBER_OF_VIEWS;
-        leftStartAngle = (startIndex * DEFAULT_ONE_INTERVAL_ANGLE_VALUE + DEFAULT_CIRCLE_START_ANGLE) % 360;
+
+        float minutesAngleToAdd = (startMinute * 100) / DEFAULT_MINUTES; // --> percent of minutes where 1h = 60 min;
+        minutesAngleToAdd = (DEFAULT_ONE_INTERVAL_ANGLE_VALUE * minutesAngleToAdd) / 100;
+
+
+        leftStartAngle = (startIndex * DEFAULT_ONE_INTERVAL_ANGLE_VALUE + DEFAULT_CIRCLE_START_ANGLE);
+        leftStartAngle += minutesAngleToAdd;
+        leftStartAngle %= 360;
     }
 
     private void calculateEndAngle() {
+        int startIndex = (startHour - DEFAULT_HOUR_MODIFIER + DEFAULT_NUMBER_OF_VIEWS) % DEFAULT_NUMBER_OF_VIEWS;
+        float startHourWithoutMinutesAngle = (startIndex * DEFAULT_ONE_INTERVAL_ANGLE_VALUE + DEFAULT_CIRCLE_START_ANGLE);
         int indexDiff = endHour - startHour;
         progress = indexDiff * DEFAULT_ONE_INTERVAL_ANGLE_VALUE;
         float progressPercent = progress / DEFAULT_MAX_PROGRESS;
-        rightEndPosition = (progressPercent * DEFAULT_MAX_PROGRESS) + leftStartAngle;
+        rightEndPosition = (progressPercent * DEFAULT_MAX_PROGRESS) + startHourWithoutMinutesAngle;
+
+        float minutesAngleToAdd = (endMinute * 100) / DEFAULT_MINUTES; // --> percent of minutes where 1h = 60 min;
+        minutesAngleToAdd = (DEFAULT_ONE_INTERVAL_ANGLE_VALUE * minutesAngleToAdd) / 100;
+        rightEndPosition += minutesAngleToAdd;
+
         rightEndPosition = rightEndPosition % 360;
     }
 

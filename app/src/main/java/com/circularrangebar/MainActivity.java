@@ -77,11 +77,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppointmentView a = new AppointmentView(MainActivity.this,
-                        circularRangeBar.getLeftThumbAngle(), circularRangeBar.getProgressDegrees(),
-                        circularRangeBar.getmCircleRectF());
-                circularRangeBar.addAppointment(a);
-                //circularRangeBar.setVisibility(View.INVISIBLE);
+                circularRangeBar.addCurrentAppointment();
             }
         });
     }

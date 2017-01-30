@@ -644,6 +644,11 @@ public class CircularRangeBar extends View {
         invalidate();
     }
 
+    public void addCurrentAppointment() {
+        this.appointments.add(new AppointmentView(getContext(), this.getLeftThumbAngle(), this.getProgressDegrees(),
+                this.getmCircleRectF()));
+    }
+
     public int getProgress() {
         return mProgress;
     }

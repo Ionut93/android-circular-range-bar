@@ -24,7 +24,7 @@ public class Thumb extends View {
 
     private static final float MINIMUM_TARGET_RADIUS_DP = 24;
     private static final int SECONDS = 60;
-    protected static final int DEFAULT_THUMB_BITMAP = R.drawable.thumb;
+    protected static final int DEFAULT_THUMB_BITMAP = R.drawable.handle;
 
     protected Paint mThumbPaint;
     protected Path progressPath;
@@ -88,7 +88,7 @@ public class Thumb extends View {
         // currentHour = (int) (Math.abs(Math.ceil(mThumbPosition - CircularRangeBar.DEFAULT_START_ANGLE)) / 15 + 6) % 24;
         float thumbPosition = mThumbPosition < 360 ? mThumbPosition + 360 : mThumbPosition;
         int seconds = (int) (mThumbPosition % 15) * SECONDS / 15;
-        currentHour = (int) (((Math.ceil(thumbPosition - CircularRangeBar.DEFAULT_START_ANGLE) % 360) / 15) + 6) % 24;
+        currentHour = (int) ((((thumbPosition - CircularRangeBar.DEFAULT_START_ANGLE) % 360) / 15) + 6) % 24;
         hourToDisplay = "";
         if (currentHour < 10)
             hourToDisplay += "0";

@@ -10,7 +10,6 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -23,8 +22,8 @@ import com.circularrangebar.R;
 public class Thumb extends View {
 
     private static final float MINIMUM_TARGET_RADIUS_DP = 24;
-    private static final int SECONDS = 60;
-    protected static final int DEFAULT_THUMB_BITMAP = R.drawable.handle;
+    private static final int MINUTES = 60;
+    private static final int DEFAULT_THUMB_BITMAP = R.drawable.handle;
 
     protected Paint mThumbPaint;
     protected Path progressPath;
@@ -42,9 +41,7 @@ public class Thumb extends View {
     protected float mThumbPosition;
     protected float[] mPointerPositionXY = new float[2];
     protected float[] mTextPositionXY = new float[2];
-    protected int currentHour;
     protected String hourToDisplay;
-    protected StringBuilder sb = new StringBuilder();
     protected int mImageSize;
 
     private final Bitmap mImage;
@@ -85,10 +82,13 @@ public class Thumb extends View {
     }
 
     protected void calculateCurrentHour() {
-        // currentHour = (int) (Math.abs(Math.ceil(mThumbPosition - CircularRangeBar.DEFAULT_START_ANGLE)) / 15 + 6) % 24;
         float thumbPosition = mThumbPosition < 360 ? mThumbPosition + 360 : mThumbPosition;
-        int seconds = (int) (mThumbPosition % 15) * SECONDS / 15;
-        currentHour = (int) ((((thumbPosition - CircularRangeBar.DEFAULT_START_ANGLE) % 360) / 15) + 6) % 24;
+        int seconds = (int) (mThumbPosition % 15) * MINUTES / 15;
+        int currentHour = (int) ((((thumbPosition - CircularRangeBar.DEFAULT_START_ANGLE) % 360) / 15) + 6) % 24;
+        constructHourString(seconds, currentHour);
+    }
+
+    private void constructHourString(int seconds, int currentHour) {
         hourToDisplay = "";
         if (currentHour < 10)
             hourToDisplay += "0";
@@ -96,7 +96,6 @@ public class Thumb extends View {
         if (seconds < 10)
             hourToDisplay += "0";
         hourToDisplay += String.valueOf(seconds);
-
     }
 
     boolean isInTargetZone(float x, float y) {
@@ -129,27 +128,27 @@ public class Thumb extends View {
         boolean returnValue = pm.getPosTan(pm.getLength(), mPointerPositionXY, null);
     }
 
-    public void setmThumbIsMoving(boolean mThumbIsMoving) {
+    public void setThumbIsMoving(boolean mThumbIsMoving) {
         this.mThumbIsMoving = mThumbIsMoving;
     }
 
-    public void setmThumbPaint(Paint mThumbPaint) {
+    public void setThumbPaint(Paint mThumbPaint) {
         this.mThumbPaint = mThumbPaint;
     }
 
-    public void setmThumbPosition(float mThumbPosition) {
+    public void setThumbPosition(float mThumbPosition) {
         this.mThumbPosition = mThumbPosition;
     }
 
-    public void setmThumbPressed(boolean mThumbPressed) {
+    public void setThumbPressed(boolean mThumbPressed) {
         this.mThumbPressed = mThumbPressed;
     }
 
-    public void setmThumbRadius(float mThumbRadius) {
+    public void setThumbRadius(float mThumbRadius) {
         this.mThumbRadius = mThumbRadius;
     }
 
-    public float getmThumbPosition() {
+    public float getThumbPosition() {
         return mThumbPosition;
     }
 

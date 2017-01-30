@@ -12,12 +12,10 @@ import android.graphics.Region;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.circularrangebar.R;
-import com.circularrangebar.Views.CircularSeekBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -328,7 +326,6 @@ public class CircularRangeBar extends View {
         mCircleProgressPath.computeBounds(progressRectF, false);
     }
 
-
     protected void initializeThumbs() {
         mLeftThumb = new Thumb(getContext(), mLeftThumbRadius, mLeftThumbPaint, outerCircleRectf);
         mRightThumb = new Thumb(getContext(), mLeftThumbRadius, mRightThumbPaint, outerCircleRectf);
@@ -343,8 +340,8 @@ public class CircularRangeBar extends View {
         canvas.drawPath(mCirclePath, mCircleFillPaint);
 
         canvas.drawPath(mCircleProgressPath, mCircleProgressPaint);
-        mLeftThumb.drawThumb(canvas, mLeftThumb.getmThumbPosition());
-        mRightThumb.drawThumb(canvas, mRightThumb.getmThumbPosition());
+        mLeftThumb.drawThumb(canvas, mLeftThumb.getThumbPosition());
+        mRightThumb.drawThumb(canvas, mRightThumb.getThumbPosition());
 
         canvas.drawPath(mInsideWhiteCirclePath, mInsideWhiteCirclePaint);
 
@@ -370,20 +367,19 @@ public class CircularRangeBar extends View {
         mProgressDegrees = (mProgressDegrees < 0 ? 360f + mProgressDegrees : mProgressDegrees); // Verified
     }
 
-
     protected void calculateRightThumbPositionAngle() {
         if (mProgress == 0 || mProgress == 360) {
-            mRightThumb.setmThumbPosition(mLeftThumbAngle);
+            mRightThumb.setThumbPosition(mLeftThumbAngle);
             return;
         }
         float progressPercent = ((float) mProgress / (float) mMax);
         float rightThumbPositionPointer = (progressPercent * mTotalCircleDegrees) + mLeftThumbAngle;
         rightThumbPositionPointer = rightThumbPositionPointer % 360f;
-        mRightThumb.setmThumbPosition(rightThumbPositionPointer);
+        mRightThumb.setThumbPosition(rightThumbPositionPointer);
     }
 
     protected void calculateLeftThumbPositionAngle() {
-        mLeftThumb.setmThumbPosition(mLeftThumbAngle);
+        mLeftThumb.setThumbPosition(mLeftThumbAngle);
     }
 
     protected void recalculateAll() {
@@ -492,8 +488,8 @@ public class CircularRangeBar extends View {
     }
 
     private boolean onActionUp() {
-        mLeftThumb.setmThumbPressed(false);
-        mRightThumb.setmThumbPressed(false);
+        mLeftThumb.setThumbPressed(false);
+        mRightThumb.setThumbPressed(false);
         isProgressTouched = false;
         onStartTouchAngle = DEFAULT_ON_START_ANGLE;
         return true;
@@ -502,10 +498,10 @@ public class CircularRangeBar extends View {
     private boolean onActionDown(float x, float y) {
         if (!mLeftThumb.isThumbPressed() &&
                 !mRightThumb.isThumbPressed() && mRightThumb.isInTargetZone(x, y)) {
-            mRightThumb.setmThumbPressed(true);
+            mRightThumb.setThumbPressed(true);
             return true;
         } else if (!mRightThumb.isThumbPressed() && mLeftThumb.isInTargetZone(x, y)) {
-            mLeftThumb.setmThumbPressed(true);
+            mLeftThumb.setThumbPressed(true);
             return true;
         } else if (progressRectF.contains(x, y)) {
             isProgressTouched = true;
@@ -644,9 +640,15 @@ public class CircularRangeBar extends View {
         invalidate();
     }
 
+    public void addAppointment(int startHour, int startMinute, int endHour, int endMinute) {
+        this.appointments.add(new AppointmentView(getContext(), startHour, startMinute, endHour, endMinute, getCircleRectF()));
+        invalidate();
+    }
+
     public void addCurrentAppointment() {
         this.appointments.add(new AppointmentView(getContext(), this.getLeftThumbAngle(), this.getProgressDegrees(),
-                this.getmCircleRectF()));
+                this.getCircleRectF()));
+        invalidate();
     }
 
     public int getProgress() {
@@ -657,7 +659,7 @@ public class CircularRangeBar extends View {
         return mStartAngle;
     }
 
-    public RectF getmCircleRectF() {
+    public RectF getCircleRectF() {
         return mCircleRectF;
     }
 

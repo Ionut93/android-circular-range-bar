@@ -6,12 +6,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.View;
-
-import com.circularrangebar.R;
 
 /**
  * Created by irina on 1/27/2017.
@@ -19,6 +18,7 @@ import com.circularrangebar.R;
 
 public class AppointmentView extends View {
 
+    // region DEFAULTS
     private final String DEFAULT_COLOR = "#FF0000FF";
     private final int DEFAULT_ONE_INTERVAL_ANGLE_VALUE = 15;
     private final int DEFAULT_CIRCLE_START_ANGLE = 270;
@@ -29,9 +29,10 @@ public class AppointmentView extends View {
     this value so that we can find the correct angle
     since hour 6 should be index 0 -> TOP
      */
-    private final int DEFAULT_HOUR_MODIFIER = -6;
+    private final int DEFAULT_HOUR_MODIFIER = 6;
     private final int DEFAULT_STROKE_WIDTH = 26;
     private final int DEFAULT_MAX_PROGRESS = 360;
+    //endregion
 
     protected float leftStartAngle;
     protected float rightEndPosition;
@@ -49,9 +50,12 @@ public class AppointmentView extends View {
 
     protected int strokeWidth;
 
+    protected Context context;
+
     public AppointmentView(Context context, int startHour, int startMinute,
                            int endHour, int endMinute, RectF circleRectF) {
         super(context);
+        this.context = context;
         this.startHour = startHour;
         this.startMinute = startMinute;
         this.endHour = endHour;
@@ -68,6 +72,7 @@ public class AppointmentView extends View {
 
     public AppointmentView(Context context, float leftStartAngle, float progressDegree, RectF circleRectF) {
         super(context);
+        this.context = context;
         this.leftStartAngle = leftStartAngle;
         this.progressDegree = progressDegree;
         this.circleRectF = circleRectF;
@@ -105,7 +110,7 @@ public class AppointmentView extends View {
 
     private void calculateStartAngle() {
         int startIndex = (startHour - DEFAULT_HOUR_MODIFIER + DEFAULT_NUMBER_OF_VIEWS) % DEFAULT_NUMBER_OF_VIEWS;
-        leftStartAngle = startIndex * DEFAULT_ONE_INTERVAL_ANGLE_VALUE + DEFAULT_CIRCLE_START_ANGLE;
+        leftStartAngle = (startIndex * DEFAULT_ONE_INTERVAL_ANGLE_VALUE + DEFAULT_CIRCLE_START_ANGLE) % 360;
     }
 
     private void calculateEndAngle() {
@@ -120,4 +125,5 @@ public class AppointmentView extends View {
         progressDegree = rightEndPosition - leftStartAngle;
         progressDegree = (progressDegree < 0 ? 360f + progressDegree : progressDegree);
     }
+
 }

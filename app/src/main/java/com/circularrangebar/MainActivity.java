@@ -1,19 +1,15 @@
 package com.circularrangebar;
 
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.circularrangebar.CircularRangeBar.AppointmentView;
 import com.circularrangebar.CircularRangeBar.CircularRangeBar;
-import com.circularrangebar.Views.SeekBar;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.Entry;
@@ -22,12 +18,9 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,6 +73,14 @@ public class MainActivity extends AppCompatActivity {
                 circularRangeBar.addCurrentAppointment();
             }
         });
+    }
+
+    public void add(View v) {
+        EditText hour = (EditText) findViewById(R.id.hour);
+        EditText min = (EditText) findViewById(R.id.minutes);
+        int h = Integer.valueOf(hour.getText().toString());
+        int m = Integer.valueOf(min.getText().toString());
+        circularRangeBar.addAppointment(h, 0, m, 0);
     }
 
     public int dpToPx(int dp) {

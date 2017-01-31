@@ -50,12 +50,10 @@ public class AppointmentView extends View {
 
     protected int strokeWidth;
 
-    protected Context context;
 
     public AppointmentView(Context context, int startHour, int startMinute,
                            int endHour, int endMinute, RectF circleRectF) {
         super(context);
-        this.context = context;
         this.startHour = startHour;
         this.startMinute = startMinute;
         this.endHour = endHour;
@@ -67,17 +65,6 @@ public class AppointmentView extends View {
         calculateStartAngle();
         calculateEndAngle();
         calculateProgressDegree();
-        initializePath();
-    }
-
-    public AppointmentView(Context context, float leftStartAngle, float progressDegree, RectF circleRectF) {
-        super(context);
-        this.context = context;
-        this.leftStartAngle = leftStartAngle;
-        this.progressDegree = progressDegree;
-        this.circleRectF = circleRectF;
-        initializeStrokeWidth();
-        initializePaint();
         initializePath();
     }
 

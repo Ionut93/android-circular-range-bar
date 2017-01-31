@@ -44,6 +44,8 @@ public class Thumb extends View {
     protected float[] mTextPositionXY = new float[2];
     protected String hourToDisplay;
     protected int mImageSize;
+    protected int hour;
+    protected int minutes;
 
     private final Bitmap mImage;
     private final Matrix matrix;
@@ -90,12 +92,14 @@ public class Thumb extends View {
         constructHourString(seconds, currentHour);
     }
 
-    private void constructHourString(int seconds, int currentHour) {
+    private void constructHourString(int minutes, int currentHour) {
+        this.minutes = minutes;
+        this.hour = currentHour;
         hourToDisplay = "";
         hourToDisplay += currentHour + ":";
-        if (seconds < 10)
+        if (minutes < 10)
             hourToDisplay += "0";
-        hourToDisplay += String.valueOf(seconds);
+        hourToDisplay += String.valueOf(minutes);
     }
 
     boolean isInTargetZone(float x, float y) {
@@ -105,6 +109,14 @@ public class Thumb extends View {
             return true;
         }
         return false;
+    }
+
+    protected int getHour() {
+        return hour;
+    }
+
+    protected int getMinutes() {
+        return minutes;
     }
 
     protected void calculatePointerXYPosition(Path circleProgressPath, Path circlePath) {

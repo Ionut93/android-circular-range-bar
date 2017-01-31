@@ -516,8 +516,8 @@ public class CircularRangeBar extends View {
     }
 
     public void addCurrentAppointment() {
-        this.appointments.add(new AppointmentView(getContext(), this.getLeftThumbAngle(), this.getProgressDegrees(),
-                this.getCircleRectF()));
+        this.appointments.add(new AppointmentView(getContext(), mLeftThumb.getHour(), mLeftThumb.getMinutes(),
+                mRightThumb.getHour(), mRightThumb.getMinutes(), getCircleRectF()));
         invalidate();
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -55,6 +56,7 @@ public class Thumb extends View {
         mThumbPaint = thumbPaint;
         mThumbPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 16, context.getResources().getDisplayMetrics()));
+        mThumbPaint.setColor(Color.BLACK);
         mImage = BitmapFactory.decodeResource(context.getResources(), DEFAULT_THUMB_BITMAP);
         matrix = new Matrix();
         mImageSize = mImage.getWidth() > mImage.getHeight() ? mImage.getWidth() : mImage.getHeight();
@@ -90,8 +92,6 @@ public class Thumb extends View {
 
     private void constructHourString(int seconds, int currentHour) {
         hourToDisplay = "";
-        if (currentHour < 10)
-            hourToDisplay += "0";
         hourToDisplay += currentHour + ":";
         if (seconds < 10)
             hourToDisplay += "0";

@@ -8,7 +8,6 @@
     tools:context="com.circularrangebar.MainActivity">
 
 
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,6 +18,7 @@
             android:layout_width="240dp"
             android:layout_height="240dp"
             android:layout_centerInParent="true"
+            android:layout_marginBottom="4dp"
             android:layout_marginTop="4dp" />
 
         <com.circularrangebar.CircularRangeBar.CircularRangeBar
@@ -34,12 +34,51 @@
             app:start_angle="270"
             app:thumb_radius="20dp" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/circularRangeBar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="6am"
+            android:textColor="@android:color/darker_gray" />
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="6dp"
+            android:layout_toLeftOf="@+id/piechart"
+            android:text="12am"
+            android:textColor="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6dp"
+            android:layout_toRightOf="@+id/piechart"
+            android:text="12pm"
+            android:textColor="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/circularRangeBar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:text="6pm"
+            android:textColor="@android:color/darker_gray" />
+
     </RelativeLayout>
+
     <Button
-        android:layout_centerInParent="true"
-        android:onClick="center"
         android:layout_width="60dp"
-        android:layout_height="60dp" />
+        android:layout_height="60dp"
+        android:layout_centerInParent="true"
+        android:onClick="center" />
+
     <Button
         android:id="@+id/addView"
         android:layout_width="wrap_content"

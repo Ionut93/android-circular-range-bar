@@ -39,66 +39,40 @@ public class AppointmentView extends View {
     protected float progress;
     protected float progressDegree;
 
-    protected int startHour;
-    protected int endHour;
-    protected int startMinute;
-    protected int endMinute;
 
     protected Path progressPath;
-    protected Paint progressPaint;
-    protected RectF circleRectF;
-
-    protected int strokeWidth;
+    protected AppointmentViewModel viewModel;
 
 
-    public AppointmentView(Context context, int startHour, int startMinute,
-                           int endHour, int endMinute, RectF circleRectF) {
+    public AppointmentView(Context context, AppointmentViewModel viewModel) {
         super(context);
-        this.startHour = startHour;
-        this.startMinute = startMinute;
-        this.endHour = endHour;
-        this.endMinute = endMinute;
-        this.circleRectF = circleRectF;
+        this.viewModel = viewModel;
 
-        initializeStrokeWidth();
-        initializePaint();
         calculateStartAngle();
         calculateEndAngle();
         calculateProgressDegree();
         initializePath();
     }
 
+
     public AppointmentView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    private void initializeStrokeWidth() {
-        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        strokeWidth = (int) (DEFAULT_STROKE_WIDTH * displayMetrics.density + 0 / 5f);
-    }
-
-    private void initializePaint() {
-        progressPaint = new Paint();
-        progressPaint.setAntiAlias(true);
-        progressPaint.setDither(true);
-        progressPaint.setColor(Color.parseColor(DEFAULT_COLOR));
-        progressPaint.setStrokeWidth(strokeWidth);
-        progressPaint.setStyle(Paint.Style.STROKE);
-    }
 
     private void initializePath() {
         progressPath = new Path();
-        progressPath.addArc(circleRectF, leftStartAngle, progressDegree);
     }
 
-    protected void drawAppointment(Canvas canvas) {
-        canvas.drawPath(progressPath, progressPaint);
+    protected void drawAppointment(Canvas canvas, RectF circleRectF, Paint paint) {
+        progressPath.addArc(circleRectF, leftStartAngle, progressDegree);
+        canvas.drawPath(progressPath, paint);
     }
 
     private void calculateStartAngle() {
-        int startIndex = (startHour - DEFAULT_HOUR_MODIFIER + DEFAULT_NUMBER_OF_VIEWS) % DEFAULT_NUMBER_OF_VIEWS;
+        int startIndex = (viewModel.getStartHour() - DEFAULT_HOUR_MODIFIER + DEFAULT_NUMBER_OF_VIEWS) % DEFAULT_NUMBER_OF_VIEWS;
 
-        float minutesAngleToAdd = (startMinute * 100) / DEFAULT_MINUTES; // --> percent of minutes where 1h = 60 min;
+        float minutesAngleToAdd = (viewModel.getStartMinute() * 100) / DEFAULT_MINUTES; // --> percent of minutes where 1h = 60 min;
         minutesAngleToAdd = (DEFAULT_ONE_INTERVAL_ANGLE_VALUE * minutesAngleToAdd) / 100;
 
 
@@ -108,14 +82,14 @@ public class AppointmentView extends View {
     }
 
     private void calculateEndAngle() {
-        int startIndex = (startHour - DEFAULT_HOUR_MODIFIER + DEFAULT_NUMBER_OF_VIEWS) % DEFAULT_NUMBER_OF_VIEWS;
+        int startIndex = (viewModel.getStartHour() - DEFAULT_HOUR_MODIFIER + DEFAULT_NUMBER_OF_VIEWS) % DEFAULT_NUMBER_OF_VIEWS;
         float startHourWithoutMinutesAngle = (startIndex * DEFAULT_ONE_INTERVAL_ANGLE_VALUE + DEFAULT_CIRCLE_START_ANGLE);
-        int indexDiff = endHour - startHour;
+        int indexDiff = viewModel.getEndHour() - viewModel.getStartHour();
         progress = indexDiff * DEFAULT_ONE_INTERVAL_ANGLE_VALUE;
         float progressPercent = progress / DEFAULT_MAX_PROGRESS;
         rightEndPosition = (progressPercent * DEFAULT_MAX_PROGRESS) + startHourWithoutMinutesAngle;
 
-        float minutesAngleToAdd = (endMinute * 100) / DEFAULT_MINUTES; // --> percent of minutes where 1h = 60 min;
+        float minutesAngleToAdd = (viewModel.getEndMinute() * 100) / DEFAULT_MINUTES; // --> percent of minutes where 1h = 60 min;
         minutesAngleToAdd = (DEFAULT_ONE_INTERVAL_ANGLE_VALUE * minutesAngleToAdd) / 100;
         rightEndPosition += minutesAngleToAdd;
 

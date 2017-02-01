@@ -136,6 +136,7 @@ public class CircularRangeBar extends View {
     protected OnCircularSeekBarChangeListener mOnCircularSeekBarChangeListener;
 
     List<AppointmentView> appointments = new ArrayList<>();
+    List<AppointmentViewModel> appointmentViewModels = new ArrayList<>();
 
 //endregion
 
@@ -285,7 +286,7 @@ public class CircularRangeBar extends View {
 
         canvas.drawPath(mInsideWhiteCirclePath, mInsideWhiteCirclePaint);
         for (AppointmentView a : appointments)
-            a.drawAppointment(canvas);
+            a.drawAppointment(canvas, getCircleRectF(), mCircleProgressPaint);
 
     }
 
@@ -500,13 +501,10 @@ public class CircularRangeBar extends View {
             mLeftThumbAngle += 360;
     }
 
-    public void addAppointment(AppointmentView appointmentView) {
-        this.appointments.add(appointmentView);
-        invalidate();
-    }
-
     public void addAppointment(int startHour, int startMinute, int endHour, int endMinute) {
-        this.appointments.add(new AppointmentView(getContext(), startHour, startMinute, endHour, endMinute, getCircleRectF()));
+        AppointmentViewModel viewModel = new AppointmentViewModel(endHour, endMinute, startHour, startMinute);
+        this.appointmentViewModels.add(viewModel);
+        this.appointments.add(new AppointmentView(getContext(), viewModel));
         invalidate();
     }
 
@@ -516,8 +514,9 @@ public class CircularRangeBar extends View {
     }
 
     public void addCurrentAppointment() {
-        this.appointments.add(new AppointmentView(getContext(), mLeftThumb.getHour(), mLeftThumb.getMinutes(),
-                mRightThumb.getHour(), mRightThumb.getMinutes(), getCircleRectF()));
+        AppointmentViewModel viewModel = new AppointmentViewModel(mRightThumb.getHour(), mRightThumb.getMinutes(), mLeftThumb.getHour(), mLeftThumb.getMinutes());
+        this.appointmentViewModels.add(viewModel);
+        this.appointments.add(new AppointmentView(getContext(), viewModel));
         invalidate();
     }
 
@@ -595,6 +594,7 @@ public class CircularRangeBar extends View {
         bundle.putParcelable("instanceState", super.onSaveInstanceState());
         bundle.putFloat("LEFT_THUMB_ANGLE", mLeftThumbAngle);
         bundle.putInt("PROGRESS", mProgress);
+        bundle.putParcelableArrayList("APPOINTMENT_MODELS", (ArrayList) appointmentViewModels);
 
         return bundle;
     }
@@ -605,10 +605,17 @@ public class CircularRangeBar extends View {
             final Bundle bundle = (Bundle) state;
             mProgress = bundle.getInt("PROGRESS");
             mLeftThumbAngle = bundle.getFloat("LEFT_THUMB_ANGLE");
+            appointmentViewModels = bundle.getParcelableArrayList("APPOINTMENT_MODELS");
             super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
+            createAppointmentViews();
         } else {
             super.onRestoreInstanceState(state);
         }
+    }
+
+    private void createAppointmentViews() {
+        for (AppointmentViewModel a : appointmentViewModels)
+            appointments.add(new AppointmentView(getContext(), a));
     }
 
     /**

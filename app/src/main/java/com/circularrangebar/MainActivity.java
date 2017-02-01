@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         mChart = (PieChart) findViewById(R.id.piechart);
         mChart.setMaxHighlightDistance(0);
         mChart.setData(generatePieData());
-        mChart.setHoleRadius(60);
+        mChart.setHoleRadius(circularRangeBar.getmCircleHeight() - circularRangeBar.getmCircleStrokeWidth());
         mChart.setTransparentCircleRadius(0);
         mChart.setRotationEnabled(false);
         mChart.getLegend().setEnabled(false);

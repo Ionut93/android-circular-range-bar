@@ -46,7 +46,7 @@ public class CircularRangeBar extends View {
     //region Default values
     protected static final float DEFAULT_CIRCLE_X_RADIUS = 30f;
     protected static final float DEFAULT_CIRCLE_Y_RADIUS = 30f;
-    protected static final float DEFAULT_POINTER_RADIUS = 42f;
+    protected static final float DEFAULT_POINTER_RADIUS = 0f;
     protected static final float DEFAULT_CIRCLE_STROKE_WIDTH = 5f;
     protected static final float DEFAULT_START_ANGLE = 270f; // Geometric (clockwise, relative to 3 o'clock)
     protected static final float DEFAULT_END_ANGLE = 270f; // Geometric (clockwise, relative to 3 o'clock)
@@ -359,8 +359,8 @@ public class CircularRangeBar extends View {
             setMeasuredDimension(width, height);
         }*/
         setMeasuredDimension(width, height);
-        mCircleHeight = (float) height / 2f - mCircleStrokeWidth - DEFAULT_POINTER_RADIUS - MIN_CIRCLE_MARGIN;
-        mCircleWidth = (float) width / 2f - mCircleStrokeWidth - DEFAULT_POINTER_RADIUS - MIN_CIRCLE_MARGIN;
+        mCircleHeight = (float) height / 2f - mCircleStrokeWidth - mLeftThumbRadius - MIN_CIRCLE_MARGIN;
+        mCircleWidth = (float) width / 2f - mCircleStrokeWidth - mLeftThumbRadius - MIN_CIRCLE_MARGIN;
 
         if (mMaintainEqualCircle) { // Applies regardless of how the values were determined
             float min = Math.min(mCircleHeight, mCircleWidth);
@@ -585,6 +585,14 @@ public class CircularRangeBar extends View {
 
     public Thumb getRightThumb() {
         return mRightThumb;
+    }
+
+    public float getmCircleHeight() {
+        return mCircleHeight;
+    }
+
+    public float getmCircleStrokeWidth() {
+        return mCircleStrokeWidth;
     }
 
     @Override

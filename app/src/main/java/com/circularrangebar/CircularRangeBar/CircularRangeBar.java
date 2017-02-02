@@ -271,7 +271,7 @@ public class CircularRangeBar extends View {
 
         if (progressRegion == null)
             progressRegion = new Region();
-        progressRegion.setPath(mCircleProgressPath, new Region((int) mCircleRectF.left, (int) mCircleRectF.top, (int) mCircleRectF.right, (int) mCircleRectF.bottom));
+        progressRegion.setPath(mOutsideCircleProgressPath, new Region((int) outerCircleRectF.left, (int) outerCircleRectF.top, (int) outerCircleRectF.right, (int) outerCircleRectF.bottom));
         progressRectF.setEmpty();
         mCircleProgressPath.computeBounds(progressRectF, false);
 
@@ -304,8 +304,8 @@ public class CircularRangeBar extends View {
             mLeftThumb.drawThumb(canvas, mLeftThumb.getThumbPosition());
             mRightThumb.drawThumb(canvas, mRightThumb.getThumbPosition());
         }
-
-        canvas.drawPath(mInsideWhiteCirclePath, mInsideWhiteCirclePaint);
+        canvas.drawCircle(mCircleRectF.centerX(), mCircleRectF.centerY(), mCircleWidth - mCircleStrokeWidth / 2, mInsideWhiteCirclePaint);
+        //canvas.drawPath(mInsideWhiteCirclePath, mInsideWhiteCirclePaint);
         for (AppointmentView a : appointments)
             a.drawAppointment(canvas, getCircleRectF(), mCircleProgressPaint);
 
@@ -380,8 +380,8 @@ public class CircularRangeBar extends View {
             setMeasuredDimension(width, height);
         }*/
         setMeasuredDimension(width, height);
-        mCircleHeight = (float) height / 2f - mCircleStrokeWidth - MIN_CIRCLE_MARGIN;
-        mCircleWidth = (float) width / 2f - mCircleStrokeWidth - MIN_CIRCLE_MARGIN;
+        mCircleHeight = (float) height / 2f - mCircleStrokeWidth - mLeftThumbRadius - MIN_CIRCLE_MARGIN;
+        mCircleWidth = (float) width / 2f - mCircleStrokeWidth - mLeftThumbRadius - MIN_CIRCLE_MARGIN;
 
         if (mMaintainEqualCircle) { // Applies regardless of how the values were determined
             float min = Math.min(mCircleHeight, mCircleWidth);
@@ -407,7 +407,7 @@ public class CircularRangeBar extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                return onActionDown(x, y);
+                return onActionDown(x, y, touchAngle);
             case MotionEvent.ACTION_MOVE:
                 return onActionMove(touchAngle);
             case MotionEvent.ACTION_CANCEL:
@@ -426,9 +426,7 @@ public class CircularRangeBar extends View {
         return true;
     }
 
-    private boolean onActionDown(float x, float y) {
-/*        if (hideCurrentProgress)
-            return false;*/
+    private boolean onActionDown(float x, float y, float touchAngle) {
         if (!mLeftThumb.isThumbPressed() &&
                 !mRightThumb.isThumbPressed() && mRightThumb.isInTargetZone(x, y)) {
             mRightThumb.setThumbPressed(true);
@@ -439,9 +437,10 @@ public class CircularRangeBar extends View {
         } else if (progressRectF.contains(x, y)) {
             isProgressTouched = true;
             return true;
-        } else if (pieCircleRectF.contains((int) x, (int) y)
-                && !mInsideWitheCircleRectF.contains((int)x, (int)y)) {
-
+        } else if ((pieCircleRectF.contains((int) x, (int) y) || pieRegion.contains((int) x, (int) y))
+                && !inCircle(x, y, mCircleRectF.centerX(), mCircleRectF.centerY(), mCircleHeight - mCircleStrokeWidth / 2)) {
+            setThumbsLocationOnSection(touchAngle);
+            return true;
         }
         return false;
     }
@@ -460,6 +459,28 @@ public class CircularRangeBar extends View {
         return false;
 
     }
+
+    private void setThumbsLocationOnSection(float touchAngle) {
+        float sectionStartTouchAngle = touchAngle - (touchAngle % 15);
+        float sectionEndTouchAngle = sectionStartTouchAngle + 15;
+        if (sectionEndTouchAngle > 360)
+            sectionEndTouchAngle -= 360;
+        setLeftThumbAngle(sectionStartTouchAngle);
+        moveThumbRight(sectionEndTouchAngle);
+
+    }
+
+    private boolean inCircle(float x, float y, float circleCenterX, float circleCenterY, float circleRadius) {
+        double dx = Math.pow(x - circleCenterX, 2);
+        double dy = Math.pow(y - circleCenterY, 2);
+
+        if ((dx + dy) < Math.pow(circleRadius, 2)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     private void moveThumbLeft(float angle) {
         int progressDif = calculateProgressBetweenTwoAngles(mLeftThumbAngle, angle);
@@ -627,6 +648,7 @@ public class CircularRangeBar extends View {
         bundle.putFloat("LEFT_THUMB_ANGLE", mLeftThumbAngle);
         bundle.putInt("PROGRESS", mProgress);
         bundle.putParcelableArrayList("APPOINTMENT_MODELS", (ArrayList) appointmentViewModels);
+        bundle.putBoolean("HIDE_PROGRESS", hideCurrentProgress);
 
         return bundle;
     }
@@ -638,6 +660,7 @@ public class CircularRangeBar extends View {
             mProgress = bundle.getInt("PROGRESS");
             mLeftThumbAngle = bundle.getFloat("LEFT_THUMB_ANGLE");
             appointmentViewModels = bundle.getParcelableArrayList("APPOINTMENT_MODELS");
+            hideCurrentProgress = bundle.getBoolean("HIDE_PROGRESS");
             super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
             createAppointmentViews();
         } else {

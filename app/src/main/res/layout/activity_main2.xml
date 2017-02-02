@@ -17,8 +17,46 @@
         app:circle_stroke_width="26dp"
         app:end_angle="270"
         app:max="360"
-        app:progress="30"
+        app:progress="0"
         app:start_angle="270"
         app:thumb_radius="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/circularRangeBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="6am"
+        android:textColor="@android:color/darker_gray" />
+
+    <TextView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/circularRangeBar"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="6dp"
+        android:text="12am"
+        android:textColor="@android:color/darker_gray" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/circularRangeBar"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="6dp"
+        android:text="12pm"
+        android:textColor="@android:color/darker_gray" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/circularRangeBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="6pm"
+        android:textColor="@android:color/darker_gray" />
+
 
 </RelativeLayout>

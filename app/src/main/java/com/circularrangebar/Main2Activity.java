@@ -56,4 +56,8 @@ public class Main2Activity extends AppCompatActivity {
         circularRangeBar.setRightThumbAngle(0);
         circularRangeBar.hideCurrentProgress();
     }
+
+    public void middle(View v) {
+        Toast.makeText(this, "Map clicked", Toast.LENGTH_SHORT).show();
+    }
 }

@@ -39,7 +39,7 @@ public class CircularRangeBar extends View {
     /**
      * Margin between Text and Handle
      */
-    protected final float MIN_MARGIN_TEXT_HANDLE = 14 * DPTOPX_SCALE;
+    protected final float MIN_MARGIN_TEXT_HANDLE = 12 * DPTOPX_SCALE;
     protected final float MIN_CIRCLE_MARGIN = 18 * DPTOPX_SCALE;
     //endregion
 

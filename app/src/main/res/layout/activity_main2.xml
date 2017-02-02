@@ -10,23 +10,29 @@
     <com.circularrangebar.CircularRangeBar.CircularRangeBar
         android:id="@+id/circularRangeBar"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="310dp"
         android:layout_centerInParent="true"
         android:visibility="visible"
-        app:circle_progress_color="#ff0000ff"
-        app:circle_stroke_width="22dp"
+        app:circle_progress_color="@color/opaqueBlue"
+        app:circle_stroke_width="30dp"
         app:end_angle="270"
         app:max="360"
         app:progress="0"
         app:start_angle="270"
         app:thumb_radius="18dp" />
 
+    <Button
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_centerInParent="true"
+        android:onClick="middle"
+        android:background="@drawable/round_button" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/circularRangeBar"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
         android:text="6am"
         android:textColor="@android:color/darker_gray" />
 
@@ -54,7 +60,6 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/circularRangeBar"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
         android:text="6pm"
         android:textColor="@android:color/darker_gray" />
 

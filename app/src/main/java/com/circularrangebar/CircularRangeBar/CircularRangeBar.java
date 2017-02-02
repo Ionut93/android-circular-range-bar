@@ -80,7 +80,6 @@ public class CircularRangeBar extends View {
     protected float onStartTouchAngle = DEFAULT_ON_START_ANGLE;
 
     protected RectF mCircleRectF = new RectF();
-    protected RectF mInsideWitheCircleRectF = new RectF();
     protected RectF progressRectF = new RectF();
     protected RectF outerCircleRectF = new RectF();
     protected RectF pieCircleRectF = new RectF();
@@ -99,7 +98,6 @@ public class CircularRangeBar extends View {
     protected Path mCircleProgressPath;
     protected Path mLeftThumbStartPath;
     protected Path mLeftThumbOutsideStartPath;
-    protected Path mInsideWhiteCirclePath;
     protected Path mOutsideCircleProgressPath;
 
     protected float mCircleWidth;
@@ -115,23 +113,11 @@ public class CircularRangeBar extends View {
     public boolean isTouchEnabled = true;
 
     /**
-     * If true, then the user can specify the X and Y radii.
-     * If false, then the View itself determines the size of te CircularSeekBar.
-     */
-    protected boolean mUseCustomRadii;
-
-    /**
      * Maintain a perfect circle (equal x and y radius), regardless of view or custom attributes.
      * The smaller of the two radii will always be used in this case.
      * The default is to be a circle and not an ellipse, due to the behavior of the ellipse.
      */
     protected boolean mMaintainEqualCircle = true;
-
-    /**
-     * Once a user has touched the circle, this determines if moving outside the circle is able
-     * to change the position of the pointer (and in turn, the progress).
-     */
-    protected boolean mCanMoveOutsideCircle;
 
     protected boolean isProgressTouched = false;
 
@@ -167,8 +153,6 @@ public class CircularRangeBar extends View {
             mEndAngle = a.getFloat(R.styleable.CircularRangeBar_end_angle, DEFAULT_END_ANGLE);
             mMax = a.getInt(R.styleable.CircularRangeBar_max, DEFAULT_MAX);
             mProgress = a.getInt(R.styleable.CircularRangeBar_progress, DEFAULT_PROGRESS);
-            mCanMoveOutsideCircle = a.getBoolean(R.styleable.CircularRangeBar_move_outside_circle, DEFAULT_MOVE_OUTSIDE_CIRCLE);
-            mUseCustomRadii = a.getBoolean(R.styleable.CircularRangeBar_use_custom_radii, DEFAULT_USE_CUSTOM_RADII);
             mLeftThumbRadius = a.getDimension(R.styleable.CircularRangeBar_thumb_radius, DEFAULT_POINTER_RADIUS);
             mLeftThumbAngle = mStartAngle;
             mProgressPosition = mProgress;
@@ -232,8 +216,6 @@ public class CircularRangeBar extends View {
 
     protected void initRects() {
         mCircleRectF.set(-mCircleWidth, -mCircleHeight, mCircleWidth, mCircleHeight);
-        mInsideWitheCircleRectF.set(-mCircleWidth + mCircleStrokeWidth / 2, -mCircleHeight + mCircleStrokeWidth / 2,
-                mCircleWidth - mCircleStrokeWidth / 2, mCircleHeight - mCircleStrokeWidth / 2);
         outerCircleRectF.set(-mCircleWidth - mCircleStrokeWidth - MIN_MARGIN_TEXT_HANDLE * 2, -mCircleHeight - mCircleStrokeWidth - MIN_MARGIN_TEXT_HANDLE,
                 mCircleWidth + mCircleStrokeWidth + MIN_MARGIN_TEXT_HANDLE * 2, mCircleHeight + mCircleStrokeWidth + MIN_MARGIN_TEXT_HANDLE * 3);
     }
@@ -264,10 +246,6 @@ public class CircularRangeBar extends View {
         mLeftThumbOutsideStartPath.rewind();
         mLeftThumbOutsideStartPath.addArc(outerCircleRectF, mLeftThumbAngle, 0.3f);
 
-        if (mInsideWhiteCirclePath == null)
-            mInsideWhiteCirclePath = new Path();
-        mInsideWhiteCirclePath.rewind();
-        mInsideWhiteCirclePath.addOval(mInsideWitheCircleRectF, Path.Direction.CW);
 
         if (progressRegion == null)
             progressRegion = new Region();
@@ -305,7 +283,6 @@ public class CircularRangeBar extends View {
             mRightThumb.drawThumb(canvas, mRightThumb.getThumbPosition());
         }
         canvas.drawCircle(mCircleRectF.centerX(), mCircleRectF.centerY(), mCircleWidth - mCircleStrokeWidth / 2, mInsideWhiteCirclePaint);
-        //canvas.drawPath(mInsideWhiteCirclePath, mInsideWhiteCirclePaint);
         for (AppointmentView a : appointments)
             a.drawAppointment(canvas, getCircleRectF(), mCircleProgressPaint);
 
@@ -440,6 +417,9 @@ public class CircularRangeBar extends View {
         } else if ((pieCircleRectF.contains((int) x, (int) y) || pieRegion.contains((int) x, (int) y))
                 && !inCircle(x, y, mCircleRectF.centerX(), mCircleRectF.centerY(), mCircleHeight - mCircleStrokeWidth / 2)) {
             setThumbsLocationOnSection(touchAngle);
+            hideCurrentProgress = false;
+            recalculateAll();
+            invalidate();
             return true;
         }
         return false;
@@ -448,12 +428,18 @@ public class CircularRangeBar extends View {
     private boolean onActionMove(float touchAngle) {
         if (mRightThumb.isThumbPressed()) {
             moveThumbRight(touchAngle);
+            recalculateAll();
+            invalidate();
             return true;
         } else if (mLeftThumb.isThumbPressed()) {
             moveThumbLeft(touchAngle);
+            recalculateAll();
+            invalidate();
             return true;
         } else if (isProgressTouched) {
             moveWholeBarWithoutChangingProgressValue(touchAngle);
+            recalculateAll();
+            invalidate();
             return true;
         }
         return false;
@@ -467,7 +453,6 @@ public class CircularRangeBar extends View {
             sectionEndTouchAngle -= 360;
         setLeftThumbAngle(sectionStartTouchAngle);
         moveThumbRight(sectionEndTouchAngle);
-
     }
 
     private boolean inCircle(float x, float y, float circleCenterX, float circleCenterY, float circleRadius) {
@@ -486,8 +471,6 @@ public class CircularRangeBar extends View {
         int progressDif = calculateProgressBetweenTwoAngles(mLeftThumbAngle, angle);
         modifyPrgressByValue(progressDif);
         setLeftThumbAngle(mLeftThumbAngle + progressDif);
-        recalculateAll();
-        invalidate();
     }
 
     private void moveWholeBarWithoutChangingProgressValue(float angle) {
@@ -498,15 +481,11 @@ public class CircularRangeBar extends View {
             onStartTouchAngle = angle;
             addAngleToLeftThumb(angleToAdd);
             calculateProgressDegrees();
-            recalculateAll();
-            invalidate();
         }
     }
 
     private void moveThumbRight(float touchAngle) {
         setProgressBasedOnAngle(touchAngle, mRightThumb);
-        recalculateAll();
-        invalidate();
     }
 
     protected void setProgressBasedOnAngle(float angle, Thumb thumb) {
@@ -553,8 +532,13 @@ public class CircularRangeBar extends View {
         invalidate();
     }
 
-    public void hideCurrentProgress(boolean hide) {
-        hideCurrentProgress = hide;
+    public void hideCurrentProgress() {
+        hideCurrentProgress = true;
+        invalidate();
+    }
+
+    public void showCurrentProgress() {
+        hideCurrentProgress = false;
         invalidate();
     }
 
@@ -598,6 +582,11 @@ public class CircularRangeBar extends View {
     public void setLeftThumbAngle(float angle) {
         hideCurrentProgress = false;
         this.mLeftThumbAngle = angle;
+    }
+
+    public void setRightThumbAngle(float angle) {
+        hideCurrentProgress = false;
+        this.mRightThumb.setThumbPosition(angle);
     }
 
     public float getLeftThumbAngle() {
@@ -644,7 +633,7 @@ public class CircularRangeBar extends View {
     protected Parcelable onSaveInstanceState() {
         final Bundle bundle = new Bundle();
 
-        bundle.putParcelable("instanceState", super.onSaveInstanceState());
+        bundle.putParcelable("INSTANCE_STATE", super.onSaveInstanceState());
         bundle.putFloat("LEFT_THUMB_ANGLE", mLeftThumbAngle);
         bundle.putInt("PROGRESS", mProgress);
         bundle.putParcelableArrayList("APPOINTMENT_MODELS", (ArrayList) appointmentViewModels);
@@ -661,7 +650,7 @@ public class CircularRangeBar extends View {
             mLeftThumbAngle = bundle.getFloat("LEFT_THUMB_ANGLE");
             appointmentViewModels = bundle.getParcelableArrayList("APPOINTMENT_MODELS");
             hideCurrentProgress = bundle.getBoolean("HIDE_PROGRESS");
-            super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
+            super.onRestoreInstanceState(bundle.getParcelable("INSTANCE_STATE"));
             createAppointmentViews();
         } else {
             super.onRestoreInstanceState(state);

@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void hide(View v) {
-        circularRangeBar.hideCurrentProgress(!hideProgress);
+        circularRangeBar.hideCurrentProgress();
     }
 
     public void center(View v) {

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.circularrangebar.Main2Activity">
+
+    <com.circularrangebar.CircularRangeBar.CircularRangeBar
+        android:id="@+id/circularRangeBar"
+        android:layout_width="match_parent"
+        android:layout_height="380dp"
+        android:layout_centerInParent="true"
+        android:visibility="visible"
+        app:circle_progress_color="#ff0000ff"
+        app:circle_stroke_width="26dp"
+        app:end_angle="270"
+        app:max="360"
+        app:progress="30"
+        app:start_angle="270"
+        app:thumb_radius="20dp" />
+
+</RelativeLayout>

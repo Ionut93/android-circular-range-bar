@@ -67,6 +67,7 @@ public class CircularRangeBar extends View {
     protected Paint mLeftThumbPaint;
     protected Paint mRightThumbPaint;
     protected Paint mInsideWhiteCirclePaint;
+    protected Paint mPiesPaint;
 
     protected float mCircleStrokeWidth;
     protected float mCircleXRadius;
@@ -82,6 +83,9 @@ public class CircularRangeBar extends View {
     protected RectF mInsideWitheCircleRectF = new RectF();
     protected RectF progressRectF = new RectF();
     protected RectF outerCircleRectF = new RectF();
+    protected RectF pieCircleRectF = new RectF();
+
+    protected Region pieRegion = new Region();
     protected Region progressRegion = new Region();
 
     protected int mCircleColor = DEFAULT_CIRCLE_COLOR;
@@ -216,6 +220,14 @@ public class CircularRangeBar extends View {
         mRightThumbPaint.setStyle(Paint.Style.FILL);
         mRightThumbPaint.setColor(Color.GREEN);
         mRightThumbPaint.setStrokeWidth(mLeftThumbRadius);
+
+        mPiesPaint = new Paint();
+        mPiesPaint.setAntiAlias(true);
+        mPiesPaint.setDither(true);
+        mPiesPaint.setColor(Color.GRAY);
+        mPiesPaint.setStrokeWidth(mCircleStrokeWidth - 4);
+        mPiesPaint.setStyle(Paint.Style.STROKE);
+        mPiesPaint.setStrokeJoin(Paint.Join.ROUND);
     }
 
     protected void initRects() {
@@ -262,6 +274,12 @@ public class CircularRangeBar extends View {
         progressRegion.setPath(mCircleProgressPath, new Region((int) mCircleRectF.left, (int) mCircleRectF.top, (int) mCircleRectF.right, (int) mCircleRectF.bottom));
         progressRectF.setEmpty();
         mCircleProgressPath.computeBounds(progressRectF, false);
+
+        if (pieRegion == null)
+            pieRegion = new Region();
+        pieRegion.setPath(mCirclePath, new Region(new Region((int) mCircleRectF.left, (int) mCircleRectF.top, (int) mCircleRectF.right, (int) mCircleRectF.bottom)));
+        pieCircleRectF.setEmpty();
+        mCirclePath.computeBounds(pieCircleRectF, false);
     }
 
     protected void initializeThumbs() {
@@ -276,6 +294,9 @@ public class CircularRangeBar extends View {
 
         canvas.drawPath(mCirclePath, mCirclePaint);
         canvas.drawPath(mCirclePath, mCircleFillPaint);
+        for (int i = 0; i < 24; i++) {
+            canvas.drawArc(mCircleRectF, i * 15 + 1, 14, false, mPiesPaint);
+        }
 
 
         if (!hideCurrentProgress) {
@@ -359,8 +380,8 @@ public class CircularRangeBar extends View {
             setMeasuredDimension(width, height);
         }*/
         setMeasuredDimension(width, height);
-        mCircleHeight = (float) height / 2f - mCircleStrokeWidth - mLeftThumbRadius - MIN_CIRCLE_MARGIN;
-        mCircleWidth = (float) width / 2f - mCircleStrokeWidth - mLeftThumbRadius - MIN_CIRCLE_MARGIN;
+        mCircleHeight = (float) height / 2f - mCircleStrokeWidth - MIN_CIRCLE_MARGIN;
+        mCircleWidth = (float) width / 2f - mCircleStrokeWidth - MIN_CIRCLE_MARGIN;
 
         if (mMaintainEqualCircle) { // Applies regardless of how the values were determined
             float min = Math.min(mCircleHeight, mCircleWidth);
@@ -406,8 +427,8 @@ public class CircularRangeBar extends View {
     }
 
     private boolean onActionDown(float x, float y) {
-        if (hideCurrentProgress)
-            return false;
+/*        if (hideCurrentProgress)
+            return false;*/
         if (!mLeftThumb.isThumbPressed() &&
                 !mRightThumb.isThumbPressed() && mRightThumb.isInTargetZone(x, y)) {
             mRightThumb.setThumbPressed(true);
@@ -418,6 +439,9 @@ public class CircularRangeBar extends View {
         } else if (progressRectF.contains(x, y)) {
             isProgressTouched = true;
             return true;
+        } else if (pieCircleRectF.contains((int) x, (int) y)
+                && !mInsideWitheCircleRectF.contains((int)x, (int)y)) {
+
         }
         return false;
     }

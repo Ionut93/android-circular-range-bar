@@ -39,8 +39,8 @@ public class CircularRangeBar extends View {
     /**
      * Margin between Text and Handle
      */
-    protected final float MIN_MARGIN_TEXT_HANDLE = 12 * DPTOPX_SCALE;
-    protected final float MIN_CIRCLE_MARGIN = 30 * DPTOPX_SCALE;
+    protected final float MIN_MARGIN_TEXT_HANDLE = 14 * DPTOPX_SCALE;
+    protected final float MIN_CIRCLE_MARGIN = 18 * DPTOPX_SCALE;
     //endregion
 
     //region Default values
@@ -276,15 +276,14 @@ public class CircularRangeBar extends View {
             canvas.drawArc(mCircleRectF, i * 15 + 1, 14, false, mPiesPaint);
         }
 
-
+        for (AppointmentView a : appointments)
+            a.drawAppointment(canvas, getCircleRectF(), mCircleProgressPaint);
         if (!hideCurrentProgress) {
             canvas.drawPath(mCircleProgressPath, mCircleProgressPaint);
             mLeftThumb.drawThumb(canvas, mLeftThumb.getThumbPosition());
             mRightThumb.drawThumb(canvas, mRightThumb.getThumbPosition());
         }
         canvas.drawCircle(mCircleRectF.centerX(), mCircleRectF.centerY(), mCircleWidth - mCircleStrokeWidth / 2, mInsideWhiteCirclePaint);
-        for (AppointmentView a : appointments)
-            a.drawAppointment(canvas, getCircleRectF(), mCircleProgressPaint);
 
     }
 
@@ -404,14 +403,15 @@ public class CircularRangeBar extends View {
     }
 
     private boolean onActionDown(float x, float y, float touchAngle) {
-        if (!mLeftThumb.isThumbPressed() &&
-                !mRightThumb.isThumbPressed() && mRightThumb.isInTargetZone(x, y)) {
+        if (!mLeftThumb.isThumbPressed() && !hideCurrentProgress
+                && !mRightThumb.isThumbPressed() && mRightThumb.isInTargetZone(x, y)) {
             mRightThumb.setThumbPressed(true);
             return true;
-        } else if (!mRightThumb.isThumbPressed() && mLeftThumb.isInTargetZone(x, y)) {
+        } else if (!mRightThumb.isThumbPressed() && !hideCurrentProgress
+                && mLeftThumb.isInTargetZone(x, y)) {
             mLeftThumb.setThumbPressed(true);
             return true;
-        } else if (progressRectF.contains(x, y)) {
+        } else if (progressRectF.contains(x, y) && !hideCurrentProgress) {
             isProgressTouched = true;
             return true;
         } else if ((pieCircleRectF.contains((int) x, (int) y) || pieRegion.contains((int) x, (int) y))

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.circularrangebar.CircularRangeBar.CircularRangeBar;
 
@@ -35,11 +36,19 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     public void add(View v) {
-        EditText hour = (EditText) findViewById(R.id.hour);
-        EditText min = (EditText) findViewById(R.id.minutes);
-        int h = Integer.valueOf(hour.getText().toString());
-        int m = Integer.valueOf(min.getText().toString());
-        circularRangeBar.addAppointment(h, 15, m, 30);
+        try {
+            EditText shour = (EditText) findViewById(R.id.hour);
+            EditText smin = (EditText) findViewById(R.id.minutes);
+            EditText eMin = (EditText) findViewById(R.id.endmin);
+            EditText eH = (EditText) findViewById(R.id.endh);
+            int h = Integer.valueOf(shour.getText().toString()) % 24;
+            int m = Integer.valueOf(smin.getText().toString()) % 60;
+            int eh = Integer.valueOf(eH.getText().toString()) % 24;
+            int emin = Integer.valueOf(eMin.getText().toString()) % 60;
+            circularRangeBar.addAppointment(h, m, eh, emin);
+        } catch (NumberFormatException e) {
+            Toast.makeText(Main2Activity.this, "Insert Valid numbers", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void hide(View v) {

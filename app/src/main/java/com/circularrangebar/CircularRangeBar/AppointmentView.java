@@ -65,7 +65,7 @@ public class AppointmentView extends View {
     }
 
     protected void drawAppointment(Canvas canvas, RectF circleRectF, Paint paint) {
-        progressPath.addArc(circleRectF, leftStartAngle, progressDegree);
+        progressPath.addArc(circleRectF, leftStartAngle+1, progressDegree-1);
         canvas.drawPath(progressPath, paint);
     }
 

@@ -403,7 +403,11 @@ public class CircularRangeBar extends View {
     }
 
     private boolean onActionDown(float x, float y, float touchAngle) {
-        if (!mLeftThumb.isThumbPressed() && !hideCurrentProgress
+        if (inCircle(x, y, mCircleRectF.centerX(), mCircleRectF.centerY(), mCircleHeight - mCircleStrokeWidth / 2)) {
+            if (mOnCircularSeekBarChangeListener != null)
+                mOnCircularSeekBarChangeListener.onInsideCircleClicked(this);
+            return true;
+        } else if (!mLeftThumb.isThumbPressed() && !hideCurrentProgress
                 && !mRightThumb.isThumbPressed() && mRightThumb.isInTargetZone(x, y)) {
             mRightThumb.setThumbPressed(true);
             return true;
@@ -672,6 +676,8 @@ public class CircularRangeBar extends View {
         public abstract void onStopTrackingTouch(CircularRangeBar seekBar);
 
         public abstract void onStartTrackingTouch(CircularRangeBar seekBar);
+
+        public abstract void onInsideCircleClicked(CircularRangeBar seekBar);
 
     }
 

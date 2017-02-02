@@ -20,7 +20,27 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         circularRangeBar = (CircularRangeBar) findViewById(R.id.circularRangeBar);
+        circularRangeBar.setOnCircularSeekBarChangeListener(new CircularRangeBar.OnCircularSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(CircularRangeBar circularSeekBar, int progress, boolean fromUser) {
 
+            }
+
+            @Override
+            public void onStopTrackingTouch(CircularRangeBar seekBar) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(CircularRangeBar seekBar) {
+
+            }
+
+            @Override
+            public void onInsideCircleClicked(CircularRangeBar seekBar) {
+                Toast.makeText(Main2Activity.this, "Inside Circle", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         button = (Button) findViewById(R.id.addView);
         button.setOnClickListener(new View.OnClickListener() {

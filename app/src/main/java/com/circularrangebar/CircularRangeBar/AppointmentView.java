@@ -38,6 +38,7 @@ public class AppointmentView extends View {
     protected float rightEndPosition;
     protected float progress;
     protected float progressDegree;
+    protected boolean isDrawn = false;
 
 
     protected Path progressPath;
@@ -54,19 +55,18 @@ public class AppointmentView extends View {
         initializePath();
     }
 
-
     public AppointmentView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-
 
     private void initializePath() {
         progressPath = new Path();
     }
 
     protected void drawAppointment(Canvas canvas, RectF circleRectF, Paint paint) {
-        progressPath.addArc(circleRectF, leftStartAngle+1, progressDegree-1);
-        canvas.drawPath(progressPath, paint);
+        //progressPath.addArc(circleRectF, leftStartAngle + 1, progressDegree - 1);
+        canvas.drawArc(circleRectF, leftStartAngle + 1, progressDegree - 1, false, paint);
+        isDrawn = true;
     }
 
     private void calculateStartAngle() {
@@ -74,7 +74,6 @@ public class AppointmentView extends View {
 
         float minutesAngleToAdd = (viewModel.getStartMinute() * 100) / DEFAULT_MINUTES; // --> percent of minutes where 1h = 60 min;
         minutesAngleToAdd = (DEFAULT_ONE_INTERVAL_ANGLE_VALUE * minutesAngleToAdd) / 100;
-
 
         leftStartAngle = (startIndex * DEFAULT_ONE_INTERVAL_ANGLE_VALUE + DEFAULT_CIRCLE_START_ANGLE);
         leftStartAngle += minutesAngleToAdd;
@@ -101,4 +100,7 @@ public class AppointmentView extends View {
         progressDegree = (progressDegree < 0 ? 360f + progressDegree : progressDegree);
     }
 
+    public boolean isDrawn() {
+        return isDrawn;
+    }
 }

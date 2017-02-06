@@ -387,19 +387,49 @@ public class CircularRangeBar extends View {
             case MotionEvent.ACTION_MOVE:
                 return onActionMove(touchAngle);
             case MotionEvent.ACTION_CANCEL:
-                return onActionUp();
+                return onActionUp(touchAngle);
             case MotionEvent.ACTION_UP:
-                return onActionUp();
+                return onActionUp(touchAngle);
         }
         return false;
     }
 
-    private boolean onActionUp() {
+    private boolean onActionUp(float touchAngle) {
+        touchAngle = roundProgress(touchAngle);
+        int minutesToDisplay = 0;
+        if (touchAngle % 15 != 0)
+            minutesToDisplay = 30;
+        if (mRightThumb.isThumbPressed()) {
+            moveThumbRight(touchAngle);
+            mRightThumb.setMinutes(minutesToDisplay);
+            recalculateAll();
+            invalidate();
+        } else if (mLeftThumb.isThumbPressed()) {
+            moveThumbLeft(touchAngle);
+            mLeftThumb.setMinutes(minutesToDisplay);
+            recalculateAll();
+            invalidate();
+        }
         mLeftThumb.setThumbPressed(false);
         mRightThumb.setThumbPressed(false);
         isProgressTouched = false;
         onStartTouchAngle = DEFAULT_ON_START_ANGLE;
         return true;
+    }
+
+    private float roundProgress(float touchAngle) {
+        float angle = touchAngle % 15;
+        touchAngle = touchAngle - angle;
+        if (angle <= 5) {
+            // round bottom;
+        } else if (angle > 5 && angle <= 11) {
+            //round to half
+            touchAngle += 7.5;
+        } else if (angle > 11) {
+            //round top
+            touchAngle += 15;
+        }
+        return touchAngle;
     }
 
     private boolean onActionDown(float x, float y, float touchAngle) {
@@ -472,9 +502,15 @@ public class CircularRangeBar extends View {
 
 
     private void moveThumbLeft(float angle) {
-        int progressDif = calculateProgressBetweenTwoAngles(mLeftThumbAngle, angle);
+        float progressDif = calculateProgressBetweenTwoAngles(mLeftThumbAngle, angle);
         modifyPrgressByValue(progressDif);
         setLeftThumbAngle(mLeftThumbAngle + progressDif);
+    }
+
+    private void roundLeftThumb(float angle) {
+        float progressDif = calculateProgressBetweenTwoAngles(mLeftThumbAngle, angle);
+        modifyPrgressByValue(progressDif);
+        setLeftThumbAngle(angle);
     }
 
     private void moveWholeBarWithoutChangingProgressValue(float angle) {
@@ -498,13 +534,13 @@ public class CircularRangeBar extends View {
         mProgress = Math.round((float) mMax * mProgressDegrees / mTotalCircleDegrees);
     }
 
-    protected int calculateProgressBetweenTwoAngles(float thumbAngle, float newThumbAngle) {
-        int phi = (int) (newThumbAngle - thumbAngle) % 360;
-        int distance = phi > 360 ? 360 - phi : phi;
+    protected float calculateProgressBetweenTwoAngles(float thumbAngle, float newThumbAngle) {
+        float phi = (int) (newThumbAngle - thumbAngle) % 360;
+        float distance = phi > 360 ? 360 - phi : phi;
         return distance;
     }
 
-    protected void modifyPrgressByValue(int progress) {
+    protected void modifyPrgressByValue(float progress) {
         this.mProgress -= progress;
         verifyProgressValue();
         if (mOnCircularSeekBarChangeListener != null) {

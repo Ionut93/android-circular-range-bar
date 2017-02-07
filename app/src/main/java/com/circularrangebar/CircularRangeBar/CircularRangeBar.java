@@ -104,8 +104,8 @@ public class CircularRangeBar extends View {
     protected float mCircleHeight;
 
     protected int mMax;
-    protected int mProgress;
-    protected int mProgressPosition;
+    protected float mProgress;
+    protected float mProgressPosition;
 
     protected Thumb mLeftThumb;
     protected Thumb mRightThumb;
@@ -310,7 +310,7 @@ public class CircularRangeBar extends View {
             return;
         }
         float progressPercent = ((float) mProgress / (float) mMax);
-        float rightThumbPositionPointer = (progressPercent * mTotalCircleDegrees) + mLeftThumbAngle;
+        float rightThumbPositionPointer = (progressPercent * mTotalCircleDegrees) + mLeftThumb.getThumbPosition();
         rightThumbPositionPointer = rightThumbPositionPointer % 360f;
         mRightThumb.setThumbPosition(rightThumbPositionPointer);
     }
@@ -320,6 +320,7 @@ public class CircularRangeBar extends View {
     }
 
     protected void recalculateAll() {
+
         calculateTotalDegrees();
         calculateLeftThumbPositionAngle();
         calculateRightThumbPositionAngle();
@@ -472,7 +473,7 @@ public class CircularRangeBar extends View {
 
 
     private void moveThumbLeft(float angle) {
-        int progressDif = calculateProgressBetweenTwoAngles(mLeftThumbAngle, angle);
+        float progressDif = calculateProgressBetweenTwoAngles(mLeftThumbAngle, angle);
         modifyPrgressByValue(progressDif);
         setLeftThumbAngle(mLeftThumbAngle + progressDif);
     }
@@ -495,20 +496,20 @@ public class CircularRangeBar extends View {
     protected void setProgressBasedOnAngle(float angle, Thumb thumb) {
         thumb.mThumbPosition = angle;
         calculateProgressDegrees();
-        mProgress = Math.round((float) mMax * mProgressDegrees / mTotalCircleDegrees);
+        mProgress = mMax * mProgressDegrees / mTotalCircleDegrees;
     }
 
-    protected int calculateProgressBetweenTwoAngles(float thumbAngle, float newThumbAngle) {
-        int phi = (int) (newThumbAngle - thumbAngle) % 360;
-        int distance = phi > 360 ? 360 - phi : phi;
+    protected float calculateProgressBetweenTwoAngles(float thumbAngle, float newThumbAngle) {
+        float phi = (newThumbAngle - thumbAngle) % 360;
+        float distance = phi > 360 ? 360 - phi : phi;
         return distance;
     }
 
-    protected void modifyPrgressByValue(int progress) {
+    protected void modifyPrgressByValue(float progress) {
         this.mProgress -= progress;
         verifyProgressValue();
         if (mOnCircularSeekBarChangeListener != null) {
-            mOnCircularSeekBarChangeListener.onProgressChanged(this, mProgress, false);
+            mOnCircularSeekBarChangeListener.onProgressChanged(this, (int) mProgress, false);
         }
     }
 
@@ -570,7 +571,7 @@ public class CircularRangeBar extends View {
             if (max <= mProgress) {
                 mProgress = 0; // If the new max is less than current progress, set progress to zero
                 if (mOnCircularSeekBarChangeListener != null) {
-                    mOnCircularSeekBarChangeListener.onProgressChanged(this, mProgress, false);
+                    mOnCircularSeekBarChangeListener.onProgressChanged(this, (int) mProgress, false);
                 }
             }
             mMax = max;
@@ -602,7 +603,7 @@ public class CircularRangeBar extends View {
     }
 
     public int getProgress() {
-        return mProgress;
+        return (int) mProgress;
     }
 
     public float getStartAngle() {
@@ -639,7 +640,7 @@ public class CircularRangeBar extends View {
 
         bundle.putParcelable("INSTANCE_STATE", super.onSaveInstanceState());
         bundle.putFloat("LEFT_THUMB_ANGLE", mLeftThumbAngle);
-        bundle.putInt("PROGRESS", mProgress);
+        bundle.putFloat("PROGRESS", mProgress);
         bundle.putParcelableArrayList("APPOINTMENT_MODELS", (ArrayList) appointmentViewModels);
         bundle.putBoolean("HIDE_PROGRESS", hideCurrentProgress);
 
@@ -650,7 +651,7 @@ public class CircularRangeBar extends View {
     protected void onRestoreInstanceState(Parcelable state) {
         if (state instanceof Bundle) {
             final Bundle bundle = (Bundle) state;
-            mProgress = bundle.getInt("PROGRESS");
+            mProgress = bundle.getFloat("PROGRESS");
             mLeftThumbAngle = bundle.getFloat("LEFT_THUMB_ANGLE");
             appointmentViewModels = bundle.getParcelableArrayList("APPOINTMENT_MODELS");
             hideCurrentProgress = bundle.getBoolean("HIDE_PROGRESS");

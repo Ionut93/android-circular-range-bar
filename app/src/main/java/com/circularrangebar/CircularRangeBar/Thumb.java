@@ -47,8 +47,6 @@ public class Thumb extends View {
     protected int hour;
     protected int minutes;
 
-    protected boolean displayReceivedMinutes = false;
-
     private final Bitmap mImage;
     private final Matrix matrix;
 
@@ -89,13 +87,9 @@ public class Thumb extends View {
 
     protected void calculateCurrentHour() {
         float thumbPosition = mThumbPosition < 360 ? mThumbPosition + 360 : mThumbPosition;
-        int seconds = (int) ((mThumbPosition % 15) * MINUTES / 15);
+        float min = (mThumbPosition % 15) * MINUTES / 15;
         int currentHour = (int) ((((thumbPosition - CircularRangeBar.DEFAULT_START_ANGLE) % 360) / 15) + 6) % 24;
-        if (displayReceivedMinutes) {
-            seconds = this.minutes;
-            displayReceivedMinutes = false;
-        }
-        constructHourString(seconds, currentHour);
+        constructHourString((int) min, currentHour);
     }
 
     private void constructHourString(int minutes, int currentHour) {
@@ -115,11 +109,6 @@ public class Thumb extends View {
             return true;
         }
         return false;
-    }
-
-    public void setMinutes(int minutes) {
-        this.minutes = minutes;
-        displayReceivedMinutes = true;
     }
 
     protected int getHour() {

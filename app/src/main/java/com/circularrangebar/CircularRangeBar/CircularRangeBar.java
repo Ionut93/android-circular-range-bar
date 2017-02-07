@@ -104,8 +104,8 @@ public class CircularRangeBar extends View {
     protected float mCircleHeight;
 
     protected int mMax;
-    protected int mProgress;
-    protected int mProgressPosition;
+    protected float mProgress;
+    protected float mProgressPosition;
 
     protected Thumb mLeftThumb;
     protected Thumb mRightThumb;
@@ -310,7 +310,7 @@ public class CircularRangeBar extends View {
             return;
         }
         float progressPercent = ((float) mProgress / (float) mMax);
-        float rightThumbPositionPointer = (progressPercent * mTotalCircleDegrees) + mLeftThumbAngle;
+        float rightThumbPositionPointer = (progressPercent * mTotalCircleDegrees) + mLeftThumb.getThumbPosition();
         rightThumbPositionPointer = rightThumbPositionPointer % 360f;
         mRightThumb.setThumbPosition(rightThumbPositionPointer);
     }
@@ -320,6 +320,7 @@ public class CircularRangeBar extends View {
     }
 
     protected void recalculateAll() {
+
         calculateTotalDegrees();
         calculateLeftThumbPositionAngle();
         calculateRightThumbPositionAngle();
@@ -387,49 +388,19 @@ public class CircularRangeBar extends View {
             case MotionEvent.ACTION_MOVE:
                 return onActionMove(touchAngle);
             case MotionEvent.ACTION_CANCEL:
-                return onActionUp(touchAngle);
+                return onActionUp();
             case MotionEvent.ACTION_UP:
-                return onActionUp(touchAngle);
+                return onActionUp();
         }
         return false;
     }
 
-    private boolean onActionUp(float touchAngle) {
-        touchAngle = roundProgress(touchAngle);
-        int minutesToDisplay = 0;
-        if (touchAngle % 15 != 0)
-            minutesToDisplay = 30;
-        if (mRightThumb.isThumbPressed()) {
-            moveThumbRight(touchAngle);
-            mRightThumb.setMinutes(minutesToDisplay);
-            recalculateAll();
-            invalidate();
-        } else if (mLeftThumb.isThumbPressed()) {
-            moveThumbLeft(touchAngle);
-            mLeftThumb.setMinutes(minutesToDisplay);
-            recalculateAll();
-            invalidate();
-        }
+    private boolean onActionUp() {
         mLeftThumb.setThumbPressed(false);
         mRightThumb.setThumbPressed(false);
         isProgressTouched = false;
         onStartTouchAngle = DEFAULT_ON_START_ANGLE;
         return true;
-    }
-
-    private float roundProgress(float touchAngle) {
-        float angle = touchAngle % 15;
-        touchAngle = touchAngle - angle;
-        if (angle <= 5) {
-            // round bottom;
-        } else if (angle > 5 && angle <= 11) {
-            //round to half
-            touchAngle += 7.5;
-        } else if (angle > 11) {
-            //round top
-            touchAngle += 15;
-        }
-        return touchAngle;
     }
 
     private boolean onActionDown(float x, float y, float touchAngle) {
@@ -507,12 +478,6 @@ public class CircularRangeBar extends View {
         setLeftThumbAngle(mLeftThumbAngle + progressDif);
     }
 
-    private void roundLeftThumb(float angle) {
-        float progressDif = calculateProgressBetweenTwoAngles(mLeftThumbAngle, angle);
-        modifyPrgressByValue(progressDif);
-        setLeftThumbAngle(angle);
-    }
-
     private void moveWholeBarWithoutChangingProgressValue(float angle) {
         if (onStartTouchAngle == DEFAULT_ON_START_ANGLE) {
             onStartTouchAngle = angle;
@@ -531,11 +496,11 @@ public class CircularRangeBar extends View {
     protected void setProgressBasedOnAngle(float angle, Thumb thumb) {
         thumb.mThumbPosition = angle;
         calculateProgressDegrees();
-        mProgress = Math.round((float) mMax * mProgressDegrees / mTotalCircleDegrees);
+        mProgress = mMax * mProgressDegrees / mTotalCircleDegrees;
     }
 
     protected float calculateProgressBetweenTwoAngles(float thumbAngle, float newThumbAngle) {
-        float phi = (int) (newThumbAngle - thumbAngle) % 360;
+        float phi = (newThumbAngle - thumbAngle) % 360;
         float distance = phi > 360 ? 360 - phi : phi;
         return distance;
     }
@@ -544,7 +509,7 @@ public class CircularRangeBar extends View {
         this.mProgress -= progress;
         verifyProgressValue();
         if (mOnCircularSeekBarChangeListener != null) {
-            mOnCircularSeekBarChangeListener.onProgressChanged(this, mProgress, false);
+            mOnCircularSeekBarChangeListener.onProgressChanged(this, (int) mProgress, false);
         }
     }
 
@@ -606,7 +571,7 @@ public class CircularRangeBar extends View {
             if (max <= mProgress) {
                 mProgress = 0; // If the new max is less than current progress, set progress to zero
                 if (mOnCircularSeekBarChangeListener != null) {
-                    mOnCircularSeekBarChangeListener.onProgressChanged(this, mProgress, false);
+                    mOnCircularSeekBarChangeListener.onProgressChanged(this, (int) mProgress, false);
                 }
             }
             mMax = max;
@@ -638,7 +603,7 @@ public class CircularRangeBar extends View {
     }
 
     public int getProgress() {
-        return mProgress;
+        return (int) mProgress;
     }
 
     public float getStartAngle() {
@@ -675,7 +640,7 @@ public class CircularRangeBar extends View {
 
         bundle.putParcelable("INSTANCE_STATE", super.onSaveInstanceState());
         bundle.putFloat("LEFT_THUMB_ANGLE", mLeftThumbAngle);
-        bundle.putInt("PROGRESS", mProgress);
+        bundle.putFloat("PROGRESS", mProgress);
         bundle.putParcelableArrayList("APPOINTMENT_MODELS", (ArrayList) appointmentViewModels);
         bundle.putBoolean("HIDE_PROGRESS", hideCurrentProgress);
 
@@ -686,7 +651,7 @@ public class CircularRangeBar extends View {
     protected void onRestoreInstanceState(Parcelable state) {
         if (state instanceof Bundle) {
             final Bundle bundle = (Bundle) state;
-            mProgress = bundle.getInt("PROGRESS");
+            mProgress = bundle.getFloat("PROGRESS");
             mLeftThumbAngle = bundle.getFloat("LEFT_THUMB_ANGLE");
             appointmentViewModels = bundle.getParcelableArrayList("APPOINTMENT_MODELS");
             hideCurrentProgress = bundle.getBoolean("HIDE_PROGRESS");

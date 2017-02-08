@@ -19,7 +19,6 @@ import android.view.View;
 public class AppointmentView extends View {
 
     // region DEFAULTS
-    private final String DEFAULT_COLOR = "#FF0000FF";
     private final int DEFAULT_ONE_INTERVAL_ANGLE_VALUE = 15;
     private final int DEFAULT_CIRCLE_START_ANGLE = 270;
     private final int DEFAULT_NUMBER_OF_VIEWS = 24;

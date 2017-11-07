@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                circularRangeBar.addCurrentAppointment();
+
             }
         });
     }
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         EditText min = (EditText) findViewById(R.id.minutes);
         int h = Integer.valueOf(hour.getText().toString());
         int m = Integer.valueOf(min.getText().toString());
-        circularRangeBar.addAppointment(h, 15, m, 30);
+
     }
 
     public void hide(View v) {
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clear(View v) {
-        circularRangeBar.cleanAppointments();
+        ;
     }
 
     public int dpToPx(int dp) {

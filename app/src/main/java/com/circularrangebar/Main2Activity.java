@@ -12,7 +12,6 @@ import com.circularrangebar.CircularRangeBar.CircularRangeBar;
 public class Main2Activity extends AppCompatActivity {
 
     CircularRangeBar circularRangeBar;
-    boolean hideProgress = false;
     Button button;
 
     @Override
@@ -43,32 +42,15 @@ public class Main2Activity extends AppCompatActivity {
         });
 
         button = (Button) findViewById(R.id.addView);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                circularRangeBar.addCurrentAppointment();
-            }
-        });
+
     }
 
     public void clear(View v) {
-        circularRangeBar.cleanAppointments();
+
     }
 
     public void add(View v) {
-        try {
-            EditText shour = (EditText) findViewById(R.id.hour);
-            EditText smin = (EditText) findViewById(R.id.minutes);
-            EditText eMin = (EditText) findViewById(R.id.endmin);
-            EditText eH = (EditText) findViewById(R.id.endh);
-            int h = Integer.valueOf(shour.getText().toString()) % 24;
-            int m = Integer.valueOf(smin.getText().toString()) % 60;
-            int eh = Integer.valueOf(eH.getText().toString()) % 24;
-            int emin = Integer.valueOf(eMin.getText().toString()) % 60;
-            circularRangeBar.addAppointment(h, m, eh, emin);
-        } catch (NumberFormatException e) {
-            Toast.makeText(Main2Activity.this, "Insert Valid numbers", Toast.LENGTH_SHORT).show();
-        }
+
     }
 
     public void hide(View v) {

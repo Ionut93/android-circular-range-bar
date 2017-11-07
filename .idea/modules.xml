@@ -5,6 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/CircularRangeBar.iml" filepath="$PROJECT_DIR$/CircularRangeBar.iml" />
       <module fileurl="file://$PROJECT_DIR$/RangeBar.iml" filepath="$PROJECT_DIR$/RangeBar.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git.iml" filepath="$PROJECT_DIR$/git.iml" />
     </modules>
   </component>
 </project>

@@ -24,7 +24,7 @@ public class Thumb extends View {
 
     private static final float MINIMUM_TARGET_RADIUS_DP = 24;
     private static final int MINUTES = 60;
-    private static final int DEFAULT_THUMB_BITMAP = R.drawable.handle;
+    private static final int DEFAULT_THUMB_BITMAP = R.drawable.blue_circle_handle;
 
     protected Paint mThumbPaint;
     protected Path progressPath;
@@ -61,7 +61,9 @@ public class Thumb extends View {
         mThumbPaint.setColor(Color.BLACK);
         mImage = BitmapFactory.decodeResource(context.getResources(), DEFAULT_THUMB_BITMAP);
         matrix = new Matrix();
-        mImageSize = mImage.getWidth() > mImage.getHeight() ? mImage.getWidth() : mImage.getHeight();
+        if (mImage != null) {
+            mImageSize = mImage.getWidth() > mImage.getHeight() ? mImage.getWidth() : mImage.getHeight();
+        }
         this.textRectF = textRectF;
     }
 

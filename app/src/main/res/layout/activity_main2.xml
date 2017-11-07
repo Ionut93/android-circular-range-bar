@@ -29,71 +29,36 @@
         android:clickable="false"
         android:padding="10dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/circularRangeBar"
-        android:layout_centerHorizontal="true"
-        android:text="6am"
-        android:textColor="@android:color/darker_gray" />
-
-    <TextView
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/circularRangeBar"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="6dp"
-        android:text="12am"
-        android:textColor="@android:color/darker_gray" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/circularRangeBar"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="6dp"
-        android:text="12pm"
-        android:textColor="@android:color/darker_gray" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/circularRangeBar"
-        android:layout_centerHorizontal="true"
-        android:text="6pm"
-        android:textColor="@android:color/darker_gray" />
-
     <Button
-        android:visibility="invisible"
         android:id="@+id/addView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add\nCurrent\nAppointment" />
+        android:text="Add\nCurrent\nAppointment"
+        android:visibility="invisible" />
 
     <Button
-        android:visibility="invisible"
         android:id="@+id/hide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:onClick="hide"
-        android:text="Hide\nBlue Bar" />
+        android:text="Hide\nBlue Bar"
+        android:visibility="visible" />
 
     <Button
-        android:visibility="invisible"
         android:id="@+id/clear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:onClick="clear"
-        android:text="clear" />
+        android:text="clear"
+        android:visibility="invisible" />
 
     <LinearLayout
-        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible">
 
         <Button
             android:id="@+id/add"

@@ -24,12 +24,12 @@ public class Thumb extends View {
 
     private static final float MINIMUM_TARGET_RADIUS_DP = 24;
     private static final int MINUTES = 60;
-    private static final int DEFAULT_THUMB_BITMAP = R.drawable.blue_circle_handle;
+    private static final int DEFAULT_THUMB_BITMAP = R.drawable.handle;
 
     protected Paint mThumbPaint;
-    protected Path progressPath;
-    protected RectF textRectF;
-    protected Rect textRect = new Rect();
+    protected Path mProgressPath;
+    protected RectF mmTextRectF;
+    protected Rect mTextRect = new Rect();
     protected float mThumbRadius;
 
     protected boolean mThumbPressed = false;
@@ -42,16 +42,16 @@ public class Thumb extends View {
     protected float mThumbPosition;
     protected float[] mPointerPositionXY = new float[2];
     protected float[] mTextPositionXY = new float[2];
-    protected String hourToDisplay;
+    protected String mHourToDisplay;
     protected int mImageSize;
-    protected int hour;
-    protected int minutes;
+    protected int mHour;
+    protected int mMinutes;
 
     private final Bitmap mImage;
-    private final Matrix matrix;
+    private final Matrix mMatrix;
 
 
-    public Thumb(Context context, float pointerRadius, Paint thumbPaint, RectF textRectF) {
+    public Thumb(Context context, float pointerRadius, Paint thumbPaint, RectF mmTextRectF) {
         super(context);
 
         mThumbRadius = (int) Math.max(MINIMUM_TARGET_RADIUS_DP, pointerRadius);
@@ -60,48 +60,48 @@ public class Thumb extends View {
                 16, context.getResources().getDisplayMetrics()));
         mThumbPaint.setColor(Color.BLACK);
         mImage = BitmapFactory.decodeResource(context.getResources(), DEFAULT_THUMB_BITMAP);
-        matrix = new Matrix();
+        mMatrix = new Matrix();
         if (mImage != null) {
             mImageSize = mImage.getWidth() > mImage.getHeight() ? mImage.getWidth() : mImage.getHeight();
         }
-        this.textRectF = textRectF;
+        this.mmTextRectF = mmTextRectF;
     }
 
     public void drawThumb(Canvas canvas, float angle) {
 
-        matrix.reset();
+        mMatrix.reset();
         float x = mPointerPositionXY[0] - mImage.getWidth() / 2;
         float y = mPointerPositionXY[1] - mImage.getHeight() / 2;
-        matrix.preRotate(angle - 270,
+        mMatrix.preRotate(angle - 270,
                 mImage.getWidth() / 2,
                 mImage.getHeight() / 2);
-        matrix.postTranslate(x, y);
-        canvas.drawBitmap(mImage, matrix, null);
-        calculateCurrentHour();
-        mThumbPaint.getTextBounds(hourToDisplay, 0, hourToDisplay.length(), textRect);
-        float xText = mTextPositionXY[0] - textRect.width() / 2;
-        float yText = mTextPositionXY[1] - textRect.height() / 2;
-        matrix.reset();
-        matrix.preRotate(angle - 270, textRect.width() / 2, textRect.height() / 2);
-        matrix.postTranslate(xText, yText);
-        canvas.drawText(String.valueOf(hourToDisplay), xText, yText, mThumbPaint);
+        mMatrix.postTranslate(x, y);
+        canvas.drawBitmap(mImage, mMatrix, null);
+        calculateCurrentmHour();
+        mThumbPaint.getTextBounds(mHourToDisplay, 0, mHourToDisplay.length(), mTextRect);
+        float xText = mTextPositionXY[0] - mTextRect.width() / 2;
+        float yText = mTextPositionXY[1] - mTextRect.height() / 2;
+        mMatrix.reset();
+        mMatrix.preRotate(angle - 270, mTextRect.width() / 2, mTextRect.height() / 2);
+        mMatrix.postTranslate(xText, yText);
+        canvas.drawText(String.valueOf(mHourToDisplay), xText, yText, mThumbPaint);
     }
 
-    protected void calculateCurrentHour() {
+    protected void calculateCurrentmHour() {
         float thumbPosition = mThumbPosition < 360 ? mThumbPosition + 360 : mThumbPosition;
         float min = (mThumbPosition % 15) * MINUTES / 15;
-        int currentHour = (int) ((((thumbPosition - CircularRangeBar.DEFAULT_START_ANGLE) % 360) / 15) + 6) % 24;
-        constructHourString((int) min, currentHour);
+        int currentmHour = (int) ((((thumbPosition - CircularRangeBar.DEFAULT_START_ANGLE) % 360) / 15) + 6) % 24;
+        constructmHourString((int) min, currentmHour);
     }
 
-    private void constructHourString(int minutes, int currentHour) {
-        this.minutes = minutes;
-        this.hour = currentHour;
-        hourToDisplay = "";
-        hourToDisplay += currentHour + ":";
-        if (minutes < 10)
-            hourToDisplay += "0";
-        hourToDisplay += String.valueOf(minutes);
+    private void constructmHourString(int mMinutes, int currentmHour) {
+        this.mMinutes = mMinutes;
+        this.mHour = currentmHour;
+        mHourToDisplay = "";
+        mHourToDisplay += currentmHour + ":";
+        if (mMinutes < 10)
+            mHourToDisplay += "0";
+        mHourToDisplay += String.valueOf(mMinutes);
     }
 
     boolean isInTargetZone(float x, float y) {
@@ -113,17 +113,17 @@ public class Thumb extends View {
         return false;
     }
 
-    protected int getHour() {
-        return hour;
+    protected int getmHour() {
+        return mHour;
     }
 
-    protected int getMinutes() {
-        return minutes;
+    protected int getmMinutes() {
+        return mMinutes;
     }
 
-    protected void calculatePointerXYPosition(Path circleProgressPath, Path circlePath) {
-        PathMeasure pm = new PathMeasure(circleProgressPath, false);
-        progressPath = circleProgressPath;
+    protected void calculatePointerXYPosition(Path circlemProgressPath, Path circlePath) {
+        PathMeasure pm = new PathMeasure(circlemProgressPath, false);
+        mProgressPath = circlemProgressPath;
         boolean returnValue = pm.getPosTan(pm.getLength(), mPointerPositionXY, null);
         if (!returnValue) {
             pm = new PathMeasure(circlePath, false);
@@ -131,14 +131,14 @@ public class Thumb extends View {
         }
     }
 
-    protected void calculateTextPositionXY(Path circleOutsideProgressPath) {
-        PathMeasure pm = new PathMeasure(circleOutsideProgressPath, false);
+    protected void calculateTextPositionXY(Path circleOutsidemProgressPath) {
+        PathMeasure pm = new PathMeasure(circleOutsidemProgressPath, false);
         boolean returnValue = pm.getPosTan(pm.getLength(), mTextPositionXY, null);
     }
 
-    protected void calculatePointerXYPosition(Path circleProgressPath) {
-        progressPath = circleProgressPath;
-        PathMeasure pm = new PathMeasure(circleProgressPath, false);
+    protected void calculatePointerXYPosition(Path circlemProgressPath) {
+        mProgressPath = circlemProgressPath;
+        PathMeasure pm = new PathMeasure(circlemProgressPath, false);
         boolean returnValue = pm.getPosTan(pm.getLength(), mPointerPositionXY, null);
     }
 

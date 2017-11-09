@@ -38,6 +38,7 @@
         <attr name="start_angle_s" format="float" />
         <attr name="end_angle_s" format="float" />
         <attr name="circle_fill_s" format="color" />
+
     </declare-styleable>
 
     <declare-styleable name="CircularRangeBar">
@@ -54,6 +55,10 @@
         <attr name="move_outside_circle" format="boolean" />
         <attr name="use_custom_radii" format="boolean" />
         <attr name="thumb_radius" format="dimension" />
+        <attr name="insideCircleColor" format="color" />
+        <attr name="disableInsideCircle" format="boolean" />
+        <attr name="pie_sections_color" format="color"/>
+        <attr name="draw_pies" format="boolean"/>
     </declare-styleable>
 
 </resources>

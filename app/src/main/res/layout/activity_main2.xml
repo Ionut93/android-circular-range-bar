@@ -15,9 +15,12 @@
         android:visibility="visible"
         app:circle_progress_color="@color/opaqueBlue"
         app:circle_stroke_width="30dp"
+        app:disableInsideCircle="true"
+        app:draw_pies="false"
         app:end_angle="270"
-        app:max="360"
-        app:progress="0"
+        app:insideCircleColor="@android:color/holo_orange_dark"
+        app:pie_sections_color="@android:color/holo_red_dark"
+        app:progress="30"
         app:start_angle="270"
         app:thumb_radius="20dp" />
 
@@ -27,7 +30,8 @@
         android:layout_centerInParent="true"
         android:background="@drawable/round_button"
         android:clickable="false"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/addView"

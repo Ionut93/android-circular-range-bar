@@ -56,7 +56,7 @@ public class Main2Activity extends AppCompatActivity {
     public void hide(View v) {
         circularRangeBar.setLeftThumbAngle(0);
         circularRangeBar.setRightThumbAngle(0);
-        circularRangeBar.hideCurrentProgress();
+        circularRangeBar.mHideCurrentProgress();
     }
 
     public void middle(View v) {

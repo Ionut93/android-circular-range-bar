@@ -338,7 +338,7 @@ public class CircularSeekBar extends View {
      * True if user touch input is enabled, false if user touch input is ignored.
      * This does not affect setting values programmatically.
      */
-    protected boolean isTouchEnabled = true;
+    protected boolean mIsTouchEnabled = true;
 
     /**
      * Initialize the CircularSeekBar with the attributes from the XML style.
@@ -615,7 +615,7 @@ public class CircularSeekBar extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!isTouchEnabled) {
+        if (!mIsTouchEnabled) {
             return false;
         }
 
@@ -844,7 +844,7 @@ public class CircularSeekBar extends View {
         state.putInt("mPointerAlpha", mPointerAlpha);
         state.putInt("mPointerAlphaOnTouch", mPointerAlphaOnTouch);
         state.putBoolean("lockEnabled", lockEnabled);
-        state.putBoolean("isTouchEnabled", isTouchEnabled);
+        state.putBoolean("mIsTouchEnabled", mIsTouchEnabled);
 
         return state;
     }
@@ -866,7 +866,7 @@ public class CircularSeekBar extends View {
         mPointerAlpha = savedState.getInt("mPointerAlpha");
         mPointerAlphaOnTouch = savedState.getInt("mPointerAlphaOnTouch");
         lockEnabled = savedState.getBoolean("lockEnabled");
-        isTouchEnabled = savedState.getBoolean("isTouchEnabled");
+        mIsTouchEnabled = savedState.getBoolean("mIsTouchEnabled");
 
         initPaints();
 
@@ -1067,8 +1067,8 @@ public class CircularSeekBar extends View {
      *
      * @param boolean value. True if user touch input is to be accepted, false if user touch input is to be ignored.
      */
-    public void setIsTouchEnabled(boolean isTouchEnabled) {
-        this.isTouchEnabled = isTouchEnabled;
+    public void setIsTouchEnabled(boolean mIsTouchEnabled) {
+        this.mIsTouchEnabled = mIsTouchEnabled;
     }
 
     /**
@@ -1077,7 +1077,7 @@ public class CircularSeekBar extends View {
      * @return Boolean value of true if user touch input is accepted, false if user touch input is ignored.
      */
     public boolean getIsTouchEnabled() {
-        return isTouchEnabled;
+        return mIsTouchEnabled;
     }
 
 }

@@ -16,31 +16,6 @@
     </declare-styleable>
 
 
-    <declare-styleable name="CircularSeekBar">
-        <attr name="progress_s" format="integer" />
-        <attr name="max_s" format="integer" />
-        <attr name="move_outside_circle_s" format="boolean" />
-        <attr name="maintain_equal_circle_s" format="boolean" />
-        <attr name="use_custom_radii_s" format="boolean" />
-        <attr name="lock_enabled_s" format="boolean" />
-        <attr name="circle_x_radius_s" format="dimension" />
-        <attr name="circle_y_radius_s" format="dimension" />
-        <attr name="circle_stroke_width_s" format="dimension" />
-        <attr name="pointer_radius_s" format="dimension" />
-        <attr name="pointer_halo_width_s" format="dimension" />
-        <attr name="pointer_halo_border_width_s" format="dimension" />
-        <attr name="circle_color_s" format="color" />
-        <attr name="circle_progress_color_s" format="color" />
-        <attr name="pointer_color_s" format="color" />
-        <attr name="pointer_halo_color_s" format="color" />
-        <attr name="pointer_halo_color_ontouch_s" format="color" />
-        <attr name="pointer_alpha_ontouch_s" format="integer" />
-        <attr name="start_angle_s" format="float" />
-        <attr name="end_angle_s" format="float" />
-        <attr name="circle_fill_s" format="color" />
-
-    </declare-styleable>
-
     <declare-styleable name="CircularRangeBar">
         <attr name="circle_color" format="color" />
         <attr name="circle_fill_color" format="color" />

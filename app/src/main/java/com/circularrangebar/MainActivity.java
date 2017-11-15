@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.circularrangebar.CircularRangeBar.AppointmentView;
 import com.circularrangebar.CircularRangeBar.CircularRangeBar;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -21,7 +20,6 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     CircularRangeBar circularRangeBar;
     PieChart mChart;
     Button button;
-    List<AppointmentView> appointmentViewList = new ArrayList<>();
+
     boolean hideProgress = false;
 
     @Override
@@ -82,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         EditText min = (EditText) findViewById(R.id.minutes);
         int h = Integer.valueOf(hour.getText().toString());
         int m = Integer.valueOf(min.getText().toString());
-
     }
 
     public void hide(View v) {

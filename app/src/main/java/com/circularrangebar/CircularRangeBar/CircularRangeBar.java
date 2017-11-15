@@ -676,9 +676,7 @@ public class CircularRangeBar extends View {
     //endregion
 
 
-    /**
-     * Listener for the CircularSeekBar. Implements the same methods as the normal OnSeekBarChangeListener.
-     */
+  
     public interface OnCircularSeekBarChangeListener {
 
         public abstract void onProgressChanged(CircularRangeBar circularSeekBar, int progress, boolean fromUser);
